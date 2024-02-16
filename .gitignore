@@ -6,7 +6,6 @@
 /docroot/libraries
 /docroot/modules/contrib
 /docroot/profiles/contrib
-/docroot/themes/contrib
 /docroot/sites/default/files
 /docroot/sites/settings.local.php
 /docroot/sites/development.services.yml
