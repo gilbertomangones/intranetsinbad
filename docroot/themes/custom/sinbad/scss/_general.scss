@@ -85,3 +85,12 @@
 {
   margin: 5% 0 0 5%;
 }
+
+#body_content {
+    width: auto;
+    .views-exposed-form {
+        .select-wrapper {
+            width: 50%;
+        }
+    }
+}

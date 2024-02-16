@@ -13078,3 +13078,10 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
 .region-breadcrumb {
   margin: 5% 0 0 5%;
 }
+
+#body_content {
+  width: auto;
+}
+#body_content .views-exposed-form .select-wrapper {
+  width: 50%;
+}
