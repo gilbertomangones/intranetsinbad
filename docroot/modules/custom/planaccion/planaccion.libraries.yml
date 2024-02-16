@@ -1,0 +1,6 @@
+planaccion:
+  version: VERSION
+  js:
+    js/funcionesplan.js: {}
+  dependencies:
+    - core/jquery

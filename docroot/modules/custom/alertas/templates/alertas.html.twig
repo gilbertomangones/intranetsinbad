@@ -1,0 +1,29 @@
+{#
+/**
+ * @file
+ */
+#}
+
+<h1 class="page-title">Actividades Ejecutadas</h1> 
+<table border="1" cellpadding="1" cellspacing="1" class="table table-responsive table-striped responsive-enable">  
+	<thead>
+		<tr>
+			<th>ID</th>
+        	<th>ESPACIO</th>
+            <th>META</th>
+            <th>CANT</th>
+            <th>%</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for key,value in contenido %}
+		<tr>
+            <td>{{ key }}</td>
+			<td>{{ value[0]['biblioteca'] }}</td>
+			<td>{{ value.0.cantidad }}</td>
+			<td>{{ value.1.cantidad }}</td>
+            <td>{{ (value.1.cantidad / value.0.cantidad) * 100 }} %</td>
+		</tr>
+		{% endfor %}
+	</tbody>       
+</table>

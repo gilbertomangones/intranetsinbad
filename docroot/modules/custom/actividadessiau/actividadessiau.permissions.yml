@@ -1,0 +1,9 @@
+siau programacion config:
+  title: 'Siau settings'
+  description: 'A custom permission for your module settings page Actividades Siau Programación.'
+extras programacion config:
+  title: 'Extras settings'
+  description: 'A custom permission for your module settings page Actividades Extras Programación.'
+territoriales programacion config:
+  title: 'Territorios settings'
+  description: 'A custom permission for your module settings page Actividades Territorios Programación.'

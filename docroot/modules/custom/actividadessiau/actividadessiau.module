@@ -1,0 +1,66 @@
+<?php
+
+function actividadessiau_node_prepare_form(\Drupal\Core\Entity\EntityInterface $entity, $operation, \Drupal\Core\Form\FormStateInterface $form_state) {
+	
+	$subprograma = isset($_GET['subprograma']) ? $_GET['subprograma'] :"";
+	
+	$biblioteca = isset($_GET['biblioteca']) ? $_GET['biblioteca'] : "";
+	
+	$plan = isset($_GET['plan']) ? $_GET['plan'] : "";
+    $name = isset($_GET['name']) ? $_GET['name'] : "";
+    $taxonomyname = isset($_GET['namesubp']) ? $_GET['namesubp'] : '';
+	
+	if($subprograma) {
+	    $entity->get('field_linea')->set(0, $subprograma);
+        $entity->get('title')->set(0, $taxonomyname);
+	}
+	if($biblioteca) {
+	    $entity->get('field_biblioteca')->set(0, $biblioteca);
+	}
+	if($plan) {
+	    $entity->get('field_concesion')->set(0, $plan);
+	}
+	if ($name == 'alternativos') {
+    	$to_save_value = ['2007'];
+		$entity->set('field_seccion', $to_save_value);	
+	}
+    //$entity->get('field_id_actividad_agenda')->set(0, 0);
+	
+}
+
+function actividadessiau_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  	
+	if ($form_id == 'node_actividad_ejecutada_form') {
+    	//Alterar campos franja obtenidos por get
+    	if (isset($_GET['field_franja'])) {
+    		$franjas_seleccionadas = explode(',',$_GET['field_franja']);
+    		foreach ($franjas_seleccionadas as $value) {
+        		$valor[] = trim($value);
+        	}
+        	$form['field_franja']['widget']['#title'] = t("Franjas");
+    		$form['field_franja']['widget']['#default_value'] = $valor;
+        }
+    	
+    	
+  		$name = isset($_GET['name']) ? $_GET['name'] : "";
+    	if ($name == 'alternativos'){
+    		unset($form['field_justificacion_x_cambio_fec']);
+    		unset($form['field_participantes_vs_ficha']);
+    		unset($form['field_elementos_utilizados']);
+    		unset($form['field_recursos_biblioteca']);
+    		unset($form['field_otros_recursos_desearia']);    	
+    	}
+  	}
+	if ($form_id == 'node_actividad_ejecutada_edit_form'){
+    	$node = $form_state->getFormObject()->getEntity();
+    	$seccion = $node->get('field_seccion')->getString();
+    	if ($seccion == '2007') { // Alternativos
+        	unset($form['field_justificacion_x_cambio_fec']);
+    		unset($form['field_participantes_vs_ficha']);
+    		unset($form['field_elementos_utilizados']);
+    		unset($form['field_recursos_biblioteca']);
+    		unset($form['field_otros_recursos_desearia']);    
+        }
+    }
+ }
+ 

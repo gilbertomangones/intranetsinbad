@@ -1,0 +1,21 @@
+biblored_reports.traceability:
+  path: 'reports/traceability-activities'
+  defaults: 
+    _form: 'Drupal\biblored_reports\Form\ReportsActivitiesForm'
+    _title: 'Reportes de actividades realizadas con trazabilidad'
+  requirements:
+    _permission: 'biblored traceability'
+biblored_reports.traceabilityplans:
+  path: 'reports/traceability-activities-plans'
+  defaults: 
+    _form: 'Drupal\biblored_reports\Form\ReportsActivitiesPlansForm'
+    _title: 'Reporte de plan de acción con trazabilidad'
+  requirements:
+    _permission: 'biblored traceability'
+biblored_reports.traceabilityvs:
+  path: 'reports/traceability-vs'
+  defaults: 
+    _form: 'Drupal\biblored_reports\Form\ReportsPlanActivitiesForm'
+    _title: 'Reporte integrado de plan de acción vs actividades ejecutadas'
+  requirements:
+    _permission: 'biblored traceability'

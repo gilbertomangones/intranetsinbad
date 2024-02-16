@@ -1,0 +1,233 @@
+<?php
+use Drupal\reportes\Controller\FuncionesController;
+use Drupal\node\Entity\Node;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+/**
+ * FunciÃ³n realizada para capturar la variable Plazomall realizada en el modulo de ConfiguraciÃ³n
+ * para luego obtenerla en un campo de la vista de actividades realizadas 
+ */
+
+function configuraciones_preprocess_views_view_field(&$variables) {
+  //drupal_flush_all_caches();
+  $biblioteca = "";
+  $plazo = \Drupal::config('Configuraciones.settings')->get('plazomalla');
+  $view = $variables['view'];
+  $field = $variables['field'];
+   
+  //Obtener la biblioteca a la cual pertenece EL USUARIO ACTUAL
+    $user = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id()); // Usuario actual
+    $biblioteca = $user->get('field_biblioteca_o_nodo')->getValue();
+    //dump($biblioteca);
+    $biblioteca_seleted = "*";
+    if ($biblioteca){
+      foreach ($biblioteca as $key => $value) {
+        $biblioteca_seleted = $biblioteca_seleted . "," . $value['target_id'];
+      }
+      
+    	//$cod_biblioteca = $biblioteca[0]['target_id'];	
+    }
+    if ($view->storage->id() == 'reporteactividadesrealizadas' &&
+      $view->current_display == 'page_actividades') {
+        $view->field['nothing_1']->options['alter']['text'] = $plazo;
+    }
+  // Adicionar biblioteca del usuario y compararlo luego con biblioteca del registro
+    // $view->field['nothing_2']->options['alter']['text'] = "";
+	
+  	if ($view->storage->id() == 'reporteactividadesrealizadas' && ($view->current_display == 'page_actividades' || $view->current_display == 'page_2')) {
+      $view->field['nothing_2']->options['alter']['text'] = "";
+      $view->field['nothing_2']->options['alter']['text'] = $biblioteca_seleted;
+        $user = \Drupal::currentUser()->getRoles();
+        
+      if(in_array("administrator", $user) or 
+         in_array("lideres_lineas", $user) or 
+         in_array("profesional_linea", $user) or 
+         in_array("profesional_biblioteca", $user) or 
+         in_array("coordinador_biblioteca", $user) or 
+         in_array("promotores_biblioteca", $user)) {
+          $view->field['nothing_3']->options['alter']['text'] = 1;	
+      }
+        
+        if (in_array("anonymous", $user)) {
+      		$view->field['nothing_9']->options['alter']['text'] = 1;
+   		 }else{
+      		$view->field['nothing_9']->options['alter']['text'] = 0;
+    	}
+  	}
+   // reporte siau
+   
+if ($view->storage->id() == 'reporte_actividades_servicio_integral' && $view->current_display == 'page_actividades') {
+   
+        $view->field['nothing_2']->options['alter']['text'] = "";
+        
+   		$view->field['nothing_2']->options['alter']['text'] = $biblioteca_seleted;
+   			
+  		$view->field['nothing_1']->options['alter']['text'] = $plazo;
+
+        $user = \Drupal::currentUser()->getRoles();
+		if(in_array("administrator", $user) or 
+         in_array("lideres_lineas", $user) or 
+         in_array("profesional_linea", $user) or 
+         in_array("profesional_biblioteca", $user) or 
+         in_array("coordinador_biblioteca", $user) or 
+         in_array("promotores_biblioteca", $user)) {
+		  	$view->field['nothing_3']->options['alter']['text'] = 1;	
+		}
+       /* 
+        if (in_array("anonymous", $user)) {
+      		$view->field['nothing_9']->options['alter']['text'] = 1;
+   		 }else{
+      		$view->field['nothing_9']->options['alter']['text'] = 0;
+    	}
+        */
+  } 
+// Mostrar el titulo con link en la vista de Plan de accion, solo para Adminstradores.
+if ($view->storage->id() == 'informes_plan_accion_2023' && ($view->current_display == 'page_2')) {
+      $user = \Drupal::currentUser()->getRoles();
+	  
+      if (!in_array("administrator", $user)) {
+          $view->field['title']->options['alter']['text'] = "";	
+      }
+  	}
+} 
+
+
+
+function configuraciones_update_8004() {
+  $database = \Drupal::database();
+  $entityType = 'node';
+  $fieldName = 'field_numero_asistentes';
+  $table = $entityType . '__' . $fieldName;
+  $currentRows = NULL;
+  $newFieldsList = [];
+  $fieldStorage = FieldStorageConfig::loadByName($entityType, $fieldName);
+
+  if (is_null($fieldStorage)) {
+    return;
+  }
+
+  // Get all current data from DB.
+  if ($database->schema()->tableExists($table)) {
+    // The table data to restore after the update is completed.
+    $currentRows = $database->select($table, 'n')
+      ->fields('n')
+      ->execute()
+      ->fetchAll();
+  }
+
+  // Use existing field config for new field.
+  foreach ($fieldStorage->getBundles() as $bundle => $label) {
+    $field = FieldConfig::loadByName($entityType, $bundle, $fieldName);
+    $newField = $field->toArray();
+    $newField['field_type'] = 'float';
+    $newField['settings'] = [];
+    $newFieldsList[] = $newField;
+  }
+
+  // Deleting field storage which will also delete bundles(fields).
+  $newFieldStorage = $fieldStorage->toArray();
+  $newFieldStorage['type'] = 'float';
+  $newFieldStorage['settings'] = [];
+
+  $fieldStorage->delete();
+
+  // Purge field data now to allow new field and field_storage with same name
+  // to be created.
+  field_purge_batch(40);
+
+  // Create new field storage.
+  $newFieldStorage = FieldStorageConfig::create($newFieldStorage);
+  $newFieldStorage->save();
+
+  // Create new fields.
+  foreach ($newFieldsList as $nfield) {
+    $nfieldConfig = FieldConfig::create($nfield);
+    $nfieldConfig->save();
+  }
+
+  // Restore existing data in new table.
+  if (!is_null($currentRows)) {
+    foreach ($currentRows as $row) {
+      $database->insert($table)
+        ->fields((array) $row)
+        ->execute();
+    }
+  }
+}
+
+function configuraciones_update_8006() {
+  $database = \Drupal::database();
+  $entityType = 'node';
+  $fieldName = 'field_avance_meta_producto';
+  $table = $entityType . '__' . $fieldName;
+  $currentRows = NULL;
+  $newFieldsList = [];
+  $fieldStorage = FieldStorageConfig::loadByName($entityType, $fieldName);
+
+  if (is_null($fieldStorage)) {
+    return;
+  }
+
+  // Get all current data from DB.
+  if ($database->schema()->tableExists($table)) {
+    // The table data to restore after the update is completed.
+    $currentRows = $database->select($table, 'n')
+      ->fields('n')
+      ->execute()
+      ->fetchAll();
+  }
+
+  // Use existing field config for new field.
+  foreach ($fieldStorage->getBundles() as $bundle => $label) {
+    $field = FieldConfig::loadByName($entityType, $bundle, $fieldName);
+    $newField = $field->toArray();
+    $newField['field_type'] = 'string';
+    $newField['settings'] = [];
+    $newFieldsList[] = $newField;
+  }
+
+  // Deleting field storage which will also delete bundles(fields).
+  $newFieldStorage = $fieldStorage->toArray();
+  $newFieldStorage['type'] = 'string';
+  $newFieldStorage['settings'] = [];
+
+  $fieldStorage->delete();
+
+  // Purge field data now to allow new field and field_storage with same name
+  // to be created.
+  field_purge_batch(40);
+
+  // Create new field storage.
+  $newFieldStorage = FieldStorageConfig::create($newFieldStorage);
+  $newFieldStorage->save();
+
+  // Create new fields.
+  foreach ($newFieldsList as $nfield) {
+    $nfieldConfig = FieldConfig::create($nfield);
+    $nfieldConfig->save();
+  }
+
+  // Restore existing data in new table.
+  if (!is_null($currentRows)) {
+    foreach ($currentRows as $row) {
+      $database->insert($table)
+        ->fields((array) $row)
+        ->execute();
+    }
+  }
+}
+/**
+ * implementation of hook_form_FORM_ID_alter()
+ */
+function configuraciones_form_views_exposed_form_alter(&$form, &$form_state, $form_id)
+{
+ /*
+ if ($form['#id'] == 'views-exposed-form-reporteactividadesrealizadas-page-4') {
+    $form['shs_term_node_tid_depth']['#attributes']['class'][] = 'territorial';
+  }
+  */
+}
+
+?>

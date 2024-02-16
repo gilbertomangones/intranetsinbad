@@ -1,0 +1,182 @@
+.col.inicio-left {
+    background: #4f2f7d;
+    color: #fff;
+    font-size: 12px;
+    padding: 5%;
+    .parte1 {
+        width: 70%;
+    }
+    background-image: url(../images/horse.png);
+    background-repeat: no-repeat;
+    background-position: bottom;
+    background-position-x: left;
+}
+.inicio-right p {
+    color: #464646;
+    font-size: small;
+}
+.iconos-login img {
+    float: left;
+    padding: 10px;
+}
+#block-logosinbad {
+    marging: 0 auto;
+    width: 80%;
+  }
+
+.ui-accordion-icons a:hover {
+    color: #fff;
+}
+.region-sidebar-first {
+    background: #5D4195;
+    /*overflow: hidden;
+    border-right: 20px solid #5D4195;*/
+    
+}
+
+.body_move{
+    margin-left : 25px;
+    width: 90%;
+}
+
+.menu__side_move {
+    width: 250px;
+}
+/*
+.order-2{
+    margin-top: -64px;
+    width: 80px;
+    background: #5d4195;
+}
+*/
+#block-showuser {
+    float: right;
+}
+.nameuser{
+    color: #12091C;
+}
+.sidebar .boton-cerrar {
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
+    font-size: 2rem;
+    display: block;
+    padding: 0;
+    line-height: 1.5rem;
+    margin: 0;
+    height: 32px;
+    width: 32px;
+    text-align: center;
+    vertical-align: top;
+}
+.boton-cerrar {
+    width: 35px;
+    height: 35px;
+    text-align: center;
+    display: block;
+    background: transparent;
+    color: yellow;
+    font-size: 1.5em;
+    text-decoration: none;
+    margin: 0 auto;
+}
+.boton-cerrar:hover {
+    background: yellow;
+    color: white;
+    font-weight: 900;
+    border-radius: 20px;
+}
+.ui-icon-triangle-1-e{
+    display: none;
+}
+.ui-accordion-content ul li {
+    padding-left: 1.7em;
+}
+#block-accordionmainnavigation .ui-accordion .ui-accordion-content {
+    padding-left: 1.5em;
+    font-size: 16px;
+}
+.region-sidebar-first .ui-accordion .ui-accordion-content {
+    padding: 1em 0.2em;
+}
+
+.order-1 thead tr th {
+    background: #6c3992;
+    color: #fff;
+    font-size: 12px;
+}
+details > .details-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+}
+.alert-info {
+    width: 100%;
+}
+.form-item, .form-actions {
+    padding: 0 10px;
+}
+.form-select {
+    border-color: #6c3992;
+}
+.biblored-module-agendaform {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.biblored-module-agendaform .form-actions {
+    width: 100%;
+}
+.order-1 form {
+    display: flex;
+    flex-wrap: wrap;
+}
+tbody tr td {
+    color: #464646;
+    font-size: 0.7em;
+}
+#block-logofooter {
+    color: white;
+    font-size: small;
+    text-align: center;
+    padding-top: 20px;
+}
+
+#block-accordionmainnavigation .ui-accordion .ui-accordion-header {
+    padding: 10px;
+}
+#node-actividades-misionales-form {
+    display: inline-block;
+}
+#node-actividades-misionales-form .fieldset-wrapper >div {
+    width: -webkit-fill-available;
+}
+.views-exposed-form .form--inline .form-item .form-control {
+    width: 100%;
+}
+#block-sinbad-page-title {
+    display: none;
+}
+.order-lg-2 {
+    margin-top: -17px;
+}
+#block-accordionmainnavigation .item-list ul li a, #block-accordionmainnavigation .item-list ul li span {
+    line-height: 20px;
+}
+.table {
+    border: 1px solid blueviolet;
+}
+.breadcrumb a {
+    color: #4f2f7d;
+}
+
+.closemenu {
+    display: none;
+}
+
+
+
+/* Menu */
+#menu_side h2 a {
+    text-indent: -999px;
+    width: 50px;
+}

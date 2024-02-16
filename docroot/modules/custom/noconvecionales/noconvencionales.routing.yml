@@ -1,0 +1,7 @@
+noconvencionales.programacion:
+  path: '/malla/programacionmallanoconvencionales'
+  defaults:
+    _form: '\Drupal\noconvencionales\Form\ConvencionalesForm'
+    _title: 'Registro de la programacion de la malla no convencionales'
+  requirements:
+    _permission: 'noconvencionales config'

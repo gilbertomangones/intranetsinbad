@@ -1,0 +1,6 @@
+planilla:
+  js:
+    js/planilla.js: {}
+    js/funciones.js: {}
+  dependencies:
+    - core/jquery

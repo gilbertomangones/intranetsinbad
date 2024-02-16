@@ -1,0 +1,38 @@
+{#
+/**
+ * @file
+ */
+#}
+
+<h1>REPORTE DE SERVICIOS DE BIBLIOTECA - AFILIAICIONES</h1>
+<H2>Biblioteca:</H2>
+<H2>Fechas:</H2>
+<table border="1" cellpadding="1" cellspacing="1" class="table table-responsive table-striped responsive-enable">  
+	<thead>
+		<tr>
+			<th>Afiliaciones femeninas</th>
+			<th>Afiliaciones masculinas </th>
+			<th>Afiliaciones institucionales</th>
+			<th class="priority-medium">Afiliaciones de usuarios en condición de discapacidad</th>			
+			<th>Afiliaciones categoria A (Menores a 8 años)</th>
+			<th>Afiliaciones categoria B (Desde los 8 años)</th>
+			<th>Vencimientos (Total: usuarios e instituciones)</th>
+			<th>Renovaciones (Total: usuarios e instituciones)</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>{{ contenido[3][0] }}</td>
+			<td>{{ contenido[2][0] }}</td>
+			<td>{{ contenido[0][0] }}</td>
+			<td>{{ contenido[1][0] }}</td>
+
+			<td>{{ cats['TOTAL_CATA'][0] }}</td>
+			<td>{{ cats['TOTAL_CATA'][1] }}</td>
+				
+			<td>{{ vencimientos['VENC'][0] }}</td>
+				
+			<td>{{ renovaciones['RENOV'][0] }}</td>		
+		</tr>
+	</tbody>       
+</table>

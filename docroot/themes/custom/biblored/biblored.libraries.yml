@@ -1,0 +1,12 @@
+global-styling:
+  css:
+    theme:
+      css/style.css: {}
+      css/custom.css: {}
+global-scripts:
+  version: VERSION
+  js:
+    js/funcionesgenerales.js: {}
+    js/jquery.table2excel.js: {}
+  dependencies:
+    - core/jquery

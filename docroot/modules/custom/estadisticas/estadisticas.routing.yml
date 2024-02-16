@@ -1,0 +1,7 @@
+estadisticas.routing:
+  path: '/admin/structure/estadisticas'
+  defaults:
+    _title: 'Modulo de estadísticas Biblored'
+    _content: '\Drupal\estadisticas\Controller\MyModuleController::general'
+  requirements:
+    _permission: 'access administration pages'  

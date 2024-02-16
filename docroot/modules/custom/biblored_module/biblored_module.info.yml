@@ -1,0 +1,6 @@
+name: Biblored Module
+description: Biblored Drupal 8, 9 module
+package: Custom
+type: module
+core_version_requirement: ^8 || ^9
+configure: biblored_module.settings

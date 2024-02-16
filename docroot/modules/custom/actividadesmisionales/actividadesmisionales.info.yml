@@ -1,0 +1,6 @@
+name: Modulo para actividades misionales
+description: Drupal 8 y 9 module de actividades misionales
+package: Custom
+type: module
+core_version_requirement: ^8 || ^9
+configure: actividadesmisionales.settings

@@ -1,0 +1,87 @@
+.footer_1{
+	text-align: center;
+    display: block;
+    color: #fff;
+    background: #5D4195;
+}
+.nameuser{
+    display: block;
+}
+.nameuser:after {
+    content: url(../images/profile.png);
+}
+
+.node-form {
+    input, select {
+        border-radius: 20px;
+        border: 1px solid #5D4195;
+    }   
+    .form-check-input:checked{
+        background-color: #5D4195;
+    }
+    .btn-primary {
+        background-color: #5D4195;
+    }
+    fieldset{
+        .fieldset-wrapper {
+                padding: 1.5% 1% 3% 1%;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                .form-checkboxes{
+                    display: flex;
+                    flex-wrap: wrap;
+                }
+                
+        }
+    }
+    .form-checkboxes {
+        .form-item {
+            width: 48%;
+        }
+    }
+    #edit-group-participantes-por-genero, edit-group-poblacion, edit-group-persona-con-discapacidad {
+         .fieldset-wrapper {
+            .form-item {
+                    width: 100%;
+                }
+         }
+    }
+    
+   
+}
+.menu_especial {
+    .h2 {
+        color: #5d4195;
+    }
+}
+
+.button {
+    background: #5d4195;
+}
+
+.views-exposed-form {
+    padding-left: 5%;
+    .form--inline {
+        .form-item {
+            float:none;
+            display: flex;
+            label {
+                display: inline-block;
+                width: 30%;
+            }
+            .form-control {
+                display: inline-block;
+                width: auto;
+            }
+            input, select {
+                border: 1px solid #5D4195;
+            }
+        }
+    }
+}
+
+.region-breadcrumb
+{
+  margin: 5% 0 0 5%;
+}

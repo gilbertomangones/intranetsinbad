@@ -1,0 +1,30 @@
+{#
+/**
+ * @file
+ */
+#}
+
+<h1 class="page-title">Actividades publicadas en la agenda</h1> 
+<div class="descripcion">Información obtenida de la Agenda en línea</div>
+<table border="1" cellpadding="1" cellspacing="1" class="table table-responsive table-striped responsive-enable">  
+	<thead>
+		<tr>
+			<th>Biblioteca</th>
+			<th>Fecha</th>
+			<th>Actividad</th>
+			<th class="priority-medium">Descripción</th>			
+			<th>Línea</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for key,value in contenido %}
+		<tr>
+			<td>{{ value.nombre_biblioteca}}</td>
+			<td>{{ value.fecha_evento}}</td>
+			<td><a href="/node/add/actividad_ejecutada/?edit[body]={{ value.descripcion_larga|url_encode }}&edit[title]={{ value.titulo|url_encode}}&edit[field_biblioteca]={{biblioteca['tid'] }}&edit[field_linea]={{lineamisional['tid'] }}">{{ key }}: {{ value.titulo }}</a></td>
+			<td class="priority-medium">{{ value.descripcion_corta}}</td>			
+			<td>{{ value.nombre_linea_misional}}</td>
+		</tr>
+		{% endfor %}
+	</tbody>       
+</table>

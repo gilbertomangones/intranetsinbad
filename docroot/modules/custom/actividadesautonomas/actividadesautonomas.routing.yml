@@ -1,0 +1,14 @@
+actividadesautonomas.ingresar:
+  path: '/actividades-autonomas'
+  defaults:
+    _form: '\Drupal\actividadesautonomas\Form\ActividadAutonomaForm'
+    _title: 'Registro de actividades autónomas'
+  requirements:
+    _permission: 'autonomos programacion config'
+actividadesautonomas.ingresar_temporal:
+  path: '/actividades-autonomas-2018-oaut'
+  defaults:
+    _form: '\Drupal\actividadesautonomas\Form\Actividad2018AutonomaForm'
+    _title: 'Registro de actividades autónomas meses (Septiembre - Octubre 2018)'
+  requirements:
+    _permission: 'autonomos programacion config'

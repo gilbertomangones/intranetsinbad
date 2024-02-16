@@ -1,0 +1,35 @@
+{#
+/**
+ * @file
+ */
+#}
+
+<h1>REPORTE DE SERVICIOS DE BIBLIOTECA - PRÉSTAMOS</h1>
+{% if conectado is null %}
+<H2>Biblioteca:</H2>
+<H2>Fechas:</H2>
+<table border="1" cellpadding="1" cellspacing="1" class="table table-responsive table-striped responsive-enable">  
+	<thead>
+		<tr>
+			<th>Sala infantil</th>
+			<th>Sala general</th>
+			<th>Sonoteca y videoteca</th>
+			<th>Hemeroteca</th>			
+			<th>Portatil</th>
+			<th>Multimedia</th>
+			<th>Libro viajero</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>{{ contenido[4][0] + contenido[7][0] }}</td>
+			<td>{{ contenido[6][0] + contenido[8][0]}}</td>
+			<td>{{ contenido[0][0] + contenido[1][0] + contenido[2][0] + contenido[3][0] }}</td>
+			<td>0</td>
+			<td>{{ contenido[5][0] }}</td>
+			<td>0</td>
+			<td>0</td>
+	</tbody>       
+</table>
+
+{% endif %}

@@ -1,0 +1,881 @@
+<?php
+use Drupal\reportes\Controller\FuncionesController;
+use Drupal\node\Entity\Node;
+use Drupal\Core\Form\FormStateInterface;
+use \Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\biblored_module\Controller\EvEndpoint;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\ReplaceCommand;
+use Drupal\Core\Ajax\CommandInterface;
+use Drupal\Core\Ajax\InvokeCommand;
+use Drupal\Component\Utility\Html;
+
+function biblored_module_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+	
+    $node = Node::load(3916);
+    $node = \Drupal\node\Entity\Node::load(3916);
+    $valor = $node->get('field_concesion')->getValue();
+	
+    // Proceso en obtener los valores por serivicio web y asignarlos al form de Add
+	
+	if ($form_id == 'node_actividad_ejecutada_form' || 
+        $form_id == 'node_integral_usuario_form' || 
+        $form_id == 'node_actividad_ejecutada_edit_form') {
+    
+    	$id_malla = isset($_GET['idmalla']) ? $_GET['idmalla'] : "";
+    	$gpoblacional = isset($_GET['gpoblacional']) ? $_GET['gpoblacional'] : "";
+    	$franjas = isset($_GET['franjas']) ? $_GET['franjas'] : "";
+    	//Solo si existe id_malla asociada a la actividad 
+    	// El parámetro viene por get del servicio de Portal Biblored con el parámetro idmalla
+    	//$id_malla = 145198;
+    	if (!empty($franjas)) {
+        	$valor = [];
+        	$franjas_seleccionadas = explode(',',$_GET['franjas']);
+    		foreach ($franjas_seleccionadas as $value) {
+        		$valor[] = trim($value);
+        	}
+    		$form['field_franja']['widget']['#default_value'] = $valor;
+        }
+    	if (isset($id_malla) && !empty($id_malla)) {
+        	//unset($form['field_id_malla']); // No mostrar el campo ID malla cuando sea desde Agenda (get idmalla)
+    		$servicio = new EvEndpoint;
+    		
+            	$uri_totales = "https://intranet.biblored.net/planilla/totales.php?identificador=". $id_malla ."&tipo_identificador=id_sinbad";	
+            	$totales_planilla = $servicio->serviciojson($uri_totales);
+            	if (!empty($totales_planilla)) {
+                	//sexo
+                	$mujeres = $totales_planilla['sexo']['Mujeres']; 
+                    $hombres = $totales_planilla['sexo']['Hombres']; 
+                    $intersexual = $totales_planilla['sexo']['Intersexuales'];
+                	$no_reporta_sexo = $totales_planilla['sexo']['No_reporta'];
+                	// Poblacion
+                    $artesanos = $totales_planilla['poblacion']['Artesanos'];
+                    $afro = $totales_planilla['poblacion']['Afros'];
+                    $comunidad_Negra = $totales_planilla['poblacion']['Comunidad_Negras'];
+                    $palenqueros = $totales_planilla['poblacion']['Palenqueros'];
+                    $campesinos = $totales_planilla['poblacion']['Campesinos'];
+                    $firmantes = $totales_planilla['poblacion']['Firmantes'];
+                    $habitante_calle = $totales_planilla['poblacion']['Habitantes_calle'];
+                    $cuidadoras = $totales_planilla['poblacion']['Cuidadoras'];
+                    $migrante = $totales_planilla['poblacion']['Migrantes'];
+                    $privadas_libertad = $totales_planilla['poblacion']['Privadas_libertad'];
+                    $actividades_sexuales = $totales_planilla['poblacion']['Actividades_sexuales'];
+                    $victima_conflicto = $totales_planilla['poblacion']['Victimas_conflicto'];
+                    $raizales = $totales_planilla['poblacion']['Raizales'];
+                    $grom = $totales_planilla['poblacion']['Grom'];
+                    $indigenas = $totales_planilla['poblacion']['Indigenas'];
+                    $lgbti = $totales_planilla['poblacion']['LGBTIQ'];
+                	//$todos_poblacion = $totales_planilla['poblacion']['Todos'];
+                	$ninguna_poblacion = $totales_planilla['poblacion']['Ninguna'];
+                	$no_reporta_poblacion = $totales_planilla['poblacion']['No_reporta'];
+                    
+                	// orientacion
+                    $homosexual = $totales_planilla['orientacion']['Homosexuales'];
+                    $bisexual = $totales_planilla['orientacion']['Bisexuales'];
+                    $heterosexuales = $totales_planilla['orientacion']['Heterosexuales'];
+                	$no_reporta_orientacion = $totales_planilla['orientacion']['No_reporta'];
+                	// discapacidad
+                	$fisica = $totales_planilla['discapacidad']['Fisica'];
+                    $multiple = $totales_planilla['discapacidad']['Multiple'];
+                    $auditiva = $totales_planilla['discapacidad']['Auditiva'];
+                    $psicosocial = $totales_planilla['discapacidad']['Psicosocial'];
+                    $cognitiva = $totales_planilla['discapacidad']['Cognitiva'];
+                    $sordo_ceguera = $totales_planilla['discapacidad']['Sordo-ceguera'];
+                	$no_reporta_discapacidad = $totales_planilla['discapacidad']['No_reporta'];
+                	$ninguna_discapacidad = $totales_planilla['discapacidad']['Ninguna'];
+                    
+                	// Edad
+                	$asistentes_0_5 = $totales_planilla['edad']['asistentes_0_5'];
+                    $asistentes_6_12 = $totales_planilla['edad']['asistentes_6_12'];
+                    $asistentes_13_18 = $totales_planilla['edad']['asistentes_13_18'];
+                    $asistentes_19_27 = $totales_planilla['edad']['asistentes_19_27'];
+                    $asistentes_28_60 = $totales_planilla['edad']['asistentes_28_60'];
+                    $asistentes_61 = $totales_planilla['edad']['asistentes_61'];
+                	// Identidad de género
+                	$cisgenero = $totales_planilla['identidad']['Cisgenero'];
+                	$transgenero = $totales_planilla['identidad']['Transgenero'];
+                	$otro_identidad = $totales_planilla['identidad']['Otro'];
+                	$no_reporta_genero = $totales_planilla['identidad']['No_reporta'];
+                	
+                	/* Asignar valores anteriores */
+                	// Identidad de género
+            		$form['field_transgenero']['widget'][0]['value']['#default_value'] = $transgenero;
+                	$form['field_cisgenero']['widget'][0]['value']['#default_value'] = $cisgenero;
+                	$form['field_otro_ident_genero']['widget'][0]['value']['#default_value'] = $otro_identidad;
+                	$form['field_no_reporta_genero']['widget'][0]['value']['#default_value'] = $no_reporta_genero;
+                
+                	// Edad:: 
+                    
+                	$form['field_numero_asistentes_0_5_']['widget'][0]['value']['#default_value'] = $asistentes_0_5;
+                	$form['field_numero_asistentes_6_12_']['widget'][0]['value']['#default_value'] = $asistentes_6_12;
+                	$form['field_numero_asistentes_13_18_']['widget'][0]['value']['#default_value'] = $asistentes_13_18;
+                	$form['field_numero_asistentes_19_27_']['widget'][0]['value']['#default_value'] = $asistentes_19_27;
+                	$form['field_numero_asistentes_28_60']['widget'][0]['value']['#default_value'] = $asistentes_28_60;
+                	$form['field_numero_asistentes_61_mas']['widget'][0]['value']['#default_value'] = $asistentes_61;
+                    
+                	// discapacidad
+                	
+                    $form['field_p_discap_fisica']['widget'][0]['value']['#default_value'] = $fisica;
+                	$form['field_p_discap_auditiva']['widget'][0]['value']['#default_value'] = $auditiva;
+                	$form['field_p_discap_multiple']['widget'][0]['value']['#default_value'] = $multiple;
+                	$form['field_p_discap_psicosocial']['widget'][0]['value']['#default_value'] = $psicosocial;
+                	$form['field_p_discap_cognitiva']['widget'][0]['value']['#default_value'] = $cognitiva;
+                	$form['field_p_discap_sordo_ceguera']['widget'][0]['value']['#default_value'] = $sordo_ceguera;
+                    $form['field_no_reporta_discapacidad']['widget'][0]['value']['#default_value'] = $no_reporta_discapacidad;
+                	
+                    // Poblacion
+                	
+                    $form['field_artesano']['widget'][0]['value']['#default_value'] = $artesanos;
+                	$form['field_afrodescendiente_afrocolom']['widget'][0]['value']['#default_value'] = $afro;
+                	$form['field_negro_a']['widget'][0]['value']['#default_value'] = $comunidad_Negra;
+                	$form['field_palenquero_a']['widget'][0]['value']['#default_value'] = $palenqueros;
+                	$form['field_campesino_poblacion_rural']['widget'][0]['value']['#default_value'] = $campesinos;
+                	$form['field_firmante_paz']['widget'][0]['value']['#default_value'] = $firmantes;
+                	$form['field_persona_habitante_calle']['widget'][0]['value']['#default_value'] = $habitante_calle;
+                	$form['field_persona_cuidadora']['widget'][0]['value']['#default_value'] = $cuidadoras;
+                	$form['field_persona_migrante_refugia']['widget'][0]['value']['#default_value'] = $migrante;
+                	$form['field_persona_privada_libertad']['widget'][0]['value']['#default_value'] = $privadas_libertad;
+                	$form['field_persona_victima_conflicto']['widget'][0]['value']['#default_value'] = $victima_conflicto;	
+                	$form['field_persona_activ_sexual_pagad']['widget'][0]['value']['#default_value'] = $actividades_sexuales;
+                	$form['field_raizal']['widget'][0]['value']['#default_value'] = $raizales;
+                	$form['field_rrom_o_gitano_a']['widget'][0]['value']['#default_value'] = $grom;
+                	$form['field_indigena']['widget'][0]['value']['#default_value'] = $indigenas;
+                	$form['field_lgbtiq']['widget'][0]['value']['#default_value'] = $lgbti;
+                    $form['field_ninguna_poblacion']['widget'][0]['value']['#default_value'] = $ninguna_poblacion;
+                    //$form['field_toda_poblacion']['widget'][0]['value']['#default_value'] = $todos_poblacion;
+                    $form['field_no_reporta_poblacion']['widget'][0]['value']['#default_value'] = $no_reporta_poblacion;
+                    
+                    // Sexo
+                    $form['field_participantes_de_genero_fe']['widget'][0]['value']['#default_value'] = $mujeres;
+                    $form['field_participantes_de_genero_ma']['widget'][0]['value']['#default_value'] = $hombres;
+                    $form['field_participantes_de_genero_tr']['widget'][0]['value']['#default_value'] = $intersexual;
+                    $form['field_no_reporta_sexo']['widget'][0]['value']['#default_value'] = $no_reporta_sexo;
+                    
+                    // Orientacion sexual
+                    $form['field_heterosexual']['widget'][0]['value']['#default_value'] = $heterosexuales;
+                    $form['field_homosexual']['widget'][0]['value']['#default_value'] = $homosexual;
+                    $form['field_bisexual']['widget'][0]['value']['#default_value'] = $bisexual;
+                    $form['field_no_reporta_orient_sexual']['widget'][0]['value']['#default_value'] = $no_reporta_orientacion;
+                    
+                    // Franjas
+                	
+            	}
+        		// Asignar Id malla que viene por GET
+                $form['field_id_malla']['widget'][0]['value']['#default_value'] = $totales_planilla['planilla'];
+        		$form['planilla'] = [
+        			'#weight' => 1,
+    				'#type' => 'button',
+    				'#value' => t('Buscar Planilla.'),
+    				'#ajax' => [
+      					'callback' => 'buscarPlanillaAjaxCallback',
+      					'event' => 'click',
+    				]
+  				];
+        	$form['#attached']['library'][] = 'biblored_module/planilla';
+        }else{
+        	//$form['field_cisgenero']['widget'][0]['value']['#default_value'] = 100;
+        	//dump($form['field_id_malla']['widget'][0]['value']);
+        	$form['planilla'] = [
+        	'#weight' => 1,
+    		'#type' => 'button',
+    		'#value' => t('Buscar Planilla.'),
+    		'#ajax' => [
+      			'callback' => 'buscarPlanillaAjaxCallback',
+      			'event' => 'click',
+    			]
+  			];
+        	$form['#attached']['library'][] = 'biblored_module/planilla';
+        	
+        	//return $form;
+        }
+    }
+	
+	if ($form_id == 'node_actividad_ejecutada_form' || 
+        $form_id == 'integral_usuario' || 
+        $form_id == 'node_actividades_misionales_form') {
+    	
+    	// Obtener el programa del formulario
+    	
+    
+    	$form['field_fecha_realizada_act']['widget'][0]['value']['#attributes']['max'] = date('Y-m-d', strtotime('now'));
+    	// Alter select de impacto
+    	$param = \Drupal::request()->query->all();
+    	
+    	$program = isset($param['subprograma']) ? $param['subprograma'] : ""; // Current program
+    	
+    	// Para el caso de crear actividad desde agenda (parametro get field_linea)
+    	$program_add_agenda = isset($param['edit']['field_linea']['widget']) ? $param['edit']['field_linea']['widget'] : ""; // Current program
+    	
+    	if (!empty($program_add_agenda)) {
+        	
+        	// Obtener id programa, vlr campo ppleo y asignarlo
+        	$termino_programa = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($program_add_agenda);
+        	$ppleo = $termino_programa->get('field_producto_ppleo')->getValue();
+        	$cod_programa = $termino_programa->get('field_codigo_programa')->getValue();
+            
+        	// Almacenar por debajo el valor de PPleo que viene desde el campo en termino taxonomia Ppleo
+        	if (isset($ppleo[0]['target_id'])) {
+            	$id_ppleo = $ppleo[0]['target_id'];
+            	$term_name_ppleo = \Drupal\taxonomy\Entity\Term::load($id_ppleo)->get('name')->value;
+        		$form['field_ppleo']['widget']['#options'] = array($id_ppleo => $term_name_ppleo);
+            }
+        	if (!empty($cod_programa)) {  
+        		$form['field_codigo_de_accion']['widget'][0]['value']['#default_value'] = $cod_programa[0]['value'];
+            }
+          $ind_producto2 = $termino_programa->get('field_indicador_producto_2')->getValue();
+          $ayuda_producto2 = $termino_programa->get('field_ayuda_indicador_producto_2')->getValue();
+          // Condicional solo para Producto 2 en el tipo de contenido integral_usuario
+          if (empty($ind_producto2)) {
+          $form['field_valor_producto_2']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+          $form['field_valor_indicador_producto_2']['widget']['#options'] = array('_none' => "N/A");
+          $form['field_valor_indicador_producto_2']['#attributes'] = array('disabled' => 'false'); 
+          
+          }else {
+          
+          $id_ind_producto_2 = $ind_producto2[0]['target_id'];
+          
+          $term_name_ind_producto_2 = \Drupal\taxonomy\Entity\Term::load($id_ind_producto_2)->get('name')->value;
+          
+          $form['field_valor_indicador_producto_2']['widget']['#options'] = array($id_ind_producto_2 => $term_name_ind_producto_2);
+          $form['field_valor_indicador_producto_2']['#attributes'] = array('disabled' => 'true'); 
+          $form['field_valor_producto_2']['widget'][0]['value']['#description'] = $ayuda_producto2;
+          }
+         // Proceso 2
+          $ind_impacto = $termino_programa->get('field_impacto')->getValue();
+          $ayuda_impacto = !empty($termino_programa->get('field_ayuda_ind_impacto')->getValue()) ? $termino_programa->get('field_ayuda_ind_impacto')->getValue()[0]['value']: "";
+          $ind_impacto = $termino_programa->get('field_impacto')->getValue();
+          $ayuda_impacto = !empty($termino_programa->get('field_ayuda_ind_impacto')->getValue()) ? $termino_programa->get('field_ayuda_ind_impacto')->getValue()[0]['value']: "";
+          if (empty($ind_impacto)) {
+            $form['field_avance_impacto']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+            $form['field_indicador_impacto']['widget']['#options'] = array('_none' => "N/A");
+            $form['field_indicador_impacto']['#attributes'] = array('disabled' => 'true'); 
+            $form['field_indicador_impacto']['widget'][0]['value']['#description'] = t('Sin indicador');
+          }else {
+            $id_ind_impacto = $ind_impacto[0]['target_id'];
+            $term_name_ind_impacto = \Drupal\taxonomy\Entity\Term::load($id_ind_impacto)->get('name')->value;
+            $form['field_indicador_impacto']['widget']['#options'] = array($id_ind_impacto => $term_name_ind_impacto);
+            $form['field_indicador_impacto']['#attributes'] = array('disabled' => 'false'); 
+            $form['field_avance_impacto']['widget'][0]['value']['#description'] = $ayuda_impacto;
+          }
+        }
+    
+		if (!empty($program)) {
+			$termino = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($program);
+			$ind_impacto = $termino->get('field_impacto')->getValue();
+        	$cod_programa = $termino->get('field_codigo_programa')->getValue();
+        
+        	$ayuda_producto = $termino->get('field_ayuda_ind_producto')->getValue();; 
+            $ayuda_proceso = $termino->get('field_ayuda_ind_proceso')->getValue();
+        	$ayuda_impacto = !empty($termino->get('field_ayuda_ind_impacto')->getValue()) ? $termino->get('field_ayuda_ind_impacto')->getValue()[0]['value']: "vacio";  
+        	$ind_prodcuto2 = $termino->get('field_indicador_producto_2')->getValue();
+      		$ayuda_producto2 = $termino->get('field_ayuda_indicador_producto_2')->getValue();
+        	$ind_proceso = !empty($termino->get('field_indicador_proceso')->getValue()) ? $termino->get('field_indicador_proceso')->getValue()[0]['target_id']: '';
+        	$ind_producto = !empty($termino->get('field_indicador_producto')->getValue()) ? $termino->get('field_indicador_producto')->getValue()[0]['target_id']: '';
+        
+      		if (!empty($cod_programa)) {  
+        		$form['field_codigo_de_accion']['widget'][0]['value']['#default_value'] = $cod_programa[0]['value'];
+            }
+            if (!empty($ind_producto)) {
+                $form['field_avance_meta_producto']['widget'][0]['value']['#description'] = isset($ayuda_producto[0]) ? $ayuda_producto[0]['value']: '';
+            }
+        	if (!empty($ind_proceso)) {
+                $form['field_avance_meta_proceso']['widget'][0]['value']['#description'] = isset($ayuda_proceso[0]) ? $ayuda_proceso[0]['value'] : '';
+            }
+            // Condicional solo para Producto 2 en el tipo de contenido integral_usuario
+        	if (empty($ind_prodcuto2)) {
+        		$form['field_valor_producto_2']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+        		$form['field_valor_indicador_producto_2']['widget']['#options'] = array('_none' => "N/A");
+        		$form['field_valor_indicador_producto_2']['#attributes'] = array('disabled' => 'false'); 
+       		}else {
+          		$id_ind_producto_2 = isset($ind_prodcuto2[0]) ? $ind_prodcuto2[0]['target_id']: '';
+          		$term_name_ind_producto_2 = \Drupal\taxonomy\Entity\Term::load($id_ind_producto_2)->get('name')->value;
+            	
+          		$form['field_valor_indicador_producto_2']['widget']['#options'] = array($id_ind_producto_2 => $term_name_ind_producto_2);
+          		$form['field_valor_indicador_producto_2']['#attributes'] = array('disabled' => 'true'); 
+            	$form['field_valor_producto_2']['widget'][0]['value']['#description'] = $ayuda_producto2[0]['value'];
+            	
+        	}
+            
+        // Obtener id programa, vlr campo ppleo y asignarlo
+        	$termino_programa = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($program);
+        	$ppleo = $termino_programa->get('field_producto_ppleo')->getValue();
+        	// Almacenar por debajo el valor de PPleo que viene desde el campo en termino taxonomia Ppleo
+        	if (isset($ppleo[0]['target_id'])) {
+            	$id_ppleo = $ppleo[0]['target_id'];
+            	$term_name_ppleo = \Drupal\taxonomy\Entity\Term::load($id_ppleo)->get('name')->value;
+        		$form['field_ppleo']['widget']['#options'] = array($id_ppleo => $term_name_ppleo);
+            }
+        
+        	//var_dump($ind_impacto);
+			if (empty($ind_impacto)) {
+                
+				$form['field_avance_impacto']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+            	
+            	$form['field_indicador_impacto']['widget']['#options'] = array('_none' => "N/A");
+		 		$form['field_indicador_impacto']['#attributes'] = array('disabled' => 'true'); 
+            	$form['field_indicador_impacto']['widget'][0]['value']['#description']['#description'] = t('Sin indicador');
+    		}else {
+    	 		$id_ind_impacto = $ind_impacto[0]['target_id'];
+		 		$term_name_ind_impacto = \Drupal\taxonomy\Entity\Term::load($id_ind_impacto)->get('name')->value;
+            	
+    	 		$form['field_indicador_impacto']['widget']['#options'] = array($id_ind_impacto => $term_name_ind_impacto);
+		 		$form['field_indicador_impacto']['#attributes'] = array('disabled' => 'false'); 
+            	$form['field_avance_impacto']['widget'][0]['value']['#description'] = $ayuda_impacto;
+            
+    		}
+		}
+        
+    }
+ 
+	if ($form_id == 'node_malla_programacion_detallada_form') {
+    	//getting field linea
+    	$query = \Drupal::entityQuery('taxonomy_term');
+        $query->accessCheck(TRUE);
+		$query->condition('vid', "areas");
+		$tids = $query->execute();
+		$terms = \Drupal\taxonomy\Entity\Term::loadMultiple($tids);
+    	$options['_none'] = t('== Empty ==');
+		foreach ($terms as $term) {
+        	$tid = $term->get('tid')->value;
+          	$name = $term->get('name')->value;
+        	
+        	$options[$tid] = $name;
+		}
+        
+    }
+    if ($form_id == "node_plan_operativo_form"){
+      $programa = \Drupal::request()->query->get('field_linea');
+      $planactual = \Drupal::request()->query->get('field_concesion');
+      $subprogramas = array();
+      if ($programa){ 
+        $vid = 'areas';
+        $children = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadChildren($programa);
+        $subprogramas[""] = t("Seleccionar un subprograma");
+        foreach ($children as $term) {
+          $tid = $term->get('tid')->value;
+          $name = $term->get('name')->value;
+          $subprogramas["$tid"] = $name;
+        }
+      }
+
+      $form['field_linea']['widget']['#options'] = $subprogramas;
+      $form['field_linea']['widget']['#required'] = 1;   
+  }
+
+  // Disable this field on actividades misionales
+  if ($form_id == "node_actividades_misionales_form") {
+  	
+  	
+    $form['field_linea']['widget']['#attributes'] = array('disabled' => 'true');    
+    $form['field_biblioteca']['widget']['#attributes'] = array('disabled' => 'true');    
+    //$form['field_concesion']['widget']['#attributes'] = array('disabled' => 'true'); 
+    
+    $param = \Drupal::request()->query->all();
+    $programa = isset($param['subprograma']) ? $param['subprograma'] : "";
+    $ind_producto = '_none';
+    $term_name_prod = "N/A";
+    $ind_proceso = '_none';
+    $term_name_proc = "N/A";
+    $id_ind_impacto = '_none';
+    $term_name_ind_impacto = "N/A";
+    // Verificar si existe el programa, que lo obtiene request url
+    if (!empty($programa)) {
+      $termino = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($programa);
+      // Verificar si existe dato de indicador de producto
+      if (isset($termino->get('field_indicador_producto')->getValue()[0])) {
+        $ind_producto = $termino->get('field_indicador_producto')->getValue()[0]['target_id'];
+        $term_name_prod = \Drupal\taxonomy\Entity\Term::load($ind_producto)->get('name')->value;
+      }
+      // Verificar si existe dato de indicador de proceso
+      if (isset($termino->get('field_indicador_proceso')->getValue()[0])) {
+        $ind_proceso = $termino->get('field_indicador_proceso')->getValue()[0]['target_id'];
+        $term_name_proc = \Drupal\taxonomy\Entity\Term::load($ind_proceso)->get('name')->value;
+      }
+      
+    }
+    // Indicadores
+    $form['field_indicador_proceso']['widget']['#options'] = array($ind_proceso => $term_name_proc);
+    $form['field_indicador_proceso']['widget']['#attributes'] = array('disabled' => 'true');
+
+    $form['field_indicador_producto']['widget']['#options'] = array($ind_producto => $term_name_prod);
+    $form['field_indicador_producto']['#attributes'] = array('disabled' => 'true'); 
+  }
+// Content type "Plan de acción concesion"
+if ($form_id == "node_plan_de_accion_concesion_edit_form") {
+    $node = $form_state->getFormObject()->getEntity();
+    $programa = $node->get('field_linea')->getString();
+    $ind_producto = $node->get('field_indicador_producto')->getString();
+	$ind_proceso = $node->get('field_indicador_proceso')->getString();
+    
+	
+    // Verificar si existe el programa, que lo obtiene request url
+    if (!empty($programa)) {
+      $termino = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($programa);
+      // Verificar si existe dato de indicador de producto
+      
+      if (isset($termino->get('field_indicador_producto')->getValue()[0])) {
+        $ind_producto = $termino->get('field_indicador_producto')->getValue()[0]['target_id'];
+        $term_name_prod = \Drupal\taxonomy\Entity\Term::load($ind_producto)->get('name')->value;
+        $form['field_indicador_producto']['widget']['#options'] = array($ind_producto => $term_name_prod);
+        $form['field_indicador_producto']['#attributes'] = array('disabled' => 'true'); 
+      }
+      // Verificar si existe dato de indicador de proceso
+      if (isset($termino->get('field_indicador_proceso')->getValue()[0])) {
+        $ind_proceso = $termino->get('field_indicador_proceso')->getValue()[0]['target_id'];
+        $term_name_proc = \Drupal\taxonomy\Entity\Term::load($ind_proceso)->get('name')->value;
+        $form['field_indicador_proceso']['widget']['#options'] = array($ind_proceso => $term_name_proc);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function biblored_module_theme($existing, $type, $theme, $path) {
+    $variables = array(
+        'my_theme' => array(
+            'variables' => array(
+                'contenido' => null,
+                'biblioteca' => null,
+                'lineamisional' => null,
+            ),
+            'template' => 'actividades',
+        ),
+        'servicios' => array(
+            'variables' => array(
+                'contenido' => null,
+                'cats' => null,
+                'vencimientos' => null,
+                'renovaciones' => null,
+            ),
+            'template' => 'serviciosbiblioteca',
+        ),
+        'prestamos' => array(
+            'variables' => array(
+                'contenido' => null,
+            ),
+            'template' => 'serviciosprestamos',
+        ),
+        'prestamosbiblioteca' => array(
+            'variables' => array(
+                'contenido' => null,
+            ),
+            'template' => 'serviciosprestamosbiblioteca',
+        ),
+        'consultasbib' => array(
+            'variables' => array(
+                'contenido' => null,
+            ),
+            'template' => 'serviciosconsultas',
+        ),
+        'consultasbiblioteca' => array(
+            'variables' => array(
+                'contenido' => null,
+            ),
+            'template' => 'serviciosconsultasbib',
+        ),
+        'conteosalasbib' => array(
+            'variables' => array(
+                'contenido' => null,
+            ),
+            'template' => 'serviciosconteo',
+        ),
+    );
+    return $variables;
+}
+
+function getProgramas($form, FormStateInterface $form_state) {
+  
+  $statistics = new FuncionesController;
+  $options = $statistics->programas($form_state->getValue('linea'));
+  
+  $form['dep']['programas']['#options'] = $options;
+  
+  $form['dep']['subprogramas'] = [
+      '#options'=> $statistics->subprogramas($form_state->getValue('programas')),
+  ];
+
+  return $form['dep'];
+}
+
+/**
+ * Implements hook_entity_presave(). Manejo del backup del campo línea => registro de actividades y plan de acción
+ */
+function biblored_module_entity_presave(Drupal\Core\Entity\EntityInterface $entity) {
+	
+      
+  if ($entity->bundle() == 'plan_de_accion_concesion' || $entity->bundle() == 'actividad_ejecutada')   
+  {
+	  global $base_url;
+  	  
+      $program_id = $entity->field_linea->target_id; // Get value selected
+      $ancestors = \Drupal::service('entity_type.manager')->getStorage("taxonomy_term")->loadAllParents($program_id);  
+      $name_estrategia = $entity->field_backup_name_estrategia->value;
+      $id_estrategy = $entity->field_backup_id_estrategia->value;
+      $name_program = $entity->field_backup_name_programa->value;
+      $id_program = $entity->field_backup_id_programa->value;
+      $name_line = $entity->field_backup_name_linea->value;
+      $id_line = $entity->field_backup_id_linea->value;
+	  //$codigo_accion = $entity->field_backup_codigo_accion->value;
+      $list = [];
+        $index = 0;
+        // 2:linea, 1: estrategia 0: programa
+  
+        foreach ($ancestors as $key => $term) {
+          $list[$index][0] = $term->id();
+          $list[$index][1] = $term->label();
+          $index++;
+        }
+  		
+      // Here you modify content programa and oly modify when is new not updated
+      // Cambio Gilberto 27 enero
+      if (!isset($name_program) && !isset($id_estrategy) && $entity->isNew() ) 
+      {
+        $entity->field_backup_id_programa = isset($list[0][0]) ?  $list[0][0] : null;
+        $entity->field_backup_name_programa = isset($list[0][1]) ? $list[0][1] : null;
+        // Obtener el código acción de este ID term
+      	if (!empty($list[0][0])) {
+        	$term_obj = Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($list[0][0]);
+        	$backup_codigo_accion = $term_obj->get('field_codigo_programa')->value;
+        	$entity->field_backup_codigo_accion = isset($backup_codigo_accion) ? $backup_codigo_accion : null;
+        }
+      }
+      
+	  // Cambio Gilberto 27 enero
+      if (!isset($name_estrategia) && !isset($id_program) && $entity->isNew()) 
+      {
+        $entity->field_backup_id_estrategia = isset($list[1][0]) ? $list[1][0] : null;
+        $entity->field_backup_name_estrategia = isset($list[1][1]) ? $list[1][1] : null;
+      }
+      
+      // Cambio Gilberto 27 enero
+      if (isset($list[2])) 
+      {
+		$entity->field_backup_id_linea = $list[2][0];
+		$entity->field_backup_name_linea = $list[2][1];
+	}else {
+		\Drupal::messenger()->addError('Por favor, revisar en el campo Línea Misional, debe llevar un programa o acción', 'true');
+		$url = $base_url.\Drupal::service('path.current')->getPath();
+		$response = new Symfony\Component\HttpFoundation\RedirectResponse($url);
+		$response->send();
+		exit;
+	}
+  }
+ 
+}
+
+function getSubprogramas($form, FormStateInterface $form_state) {
+  $statistics = new FuncionesController;
+  $form['dep']['subprogramas']['#options'] = $statistics->subprogramas($form_state->getValue('programas'));
+  
+  return $form['dep']['subprogramas'];
+}
+
+/**
+   * Implements hook_form_FORM_ID_form_alter().
+   */
+  function biblored_module_form_node_form_alter(&$form, FormStateInterface $form_state) {
+  		$node = $form_state->getFormObject()->getEntity();
+      //Comentariar cuando se requiera ingresar una actividad fuera de todo tiempo
+       $form['#validate'][] = 'biblored_module_node_form_validate';   
+  }
+/**	
+* Validar la entrada de actividades ejecutadas que cumplan las restricciones de fechas y plazos
+* Configuradas.
+*/
+  function biblored_module_node_form_validate(&$form, FormStateInterface $form_state) {
+    $sw = 0;
+    $current_user = \Drupal::currentUser();
+    $roles = $current_user->getRoles();
+    foreach ($roles as $key => $value) {
+          if ($value == 'administrator') {
+              $sw = 1;
+          }
+        }
+    
+  	$node = $form_state->getFormObject()->getEntity();
+    if (($node->getType() == 'actividad_ejecutada' || $node->getType() == 'integral_usuario')) {
+    	// Validar que el ID de la planilla no se repita
+    	$node = \Drupal::routeMatch()->getParameter('node');
+    	
+    	$nid = "";
+		if ($node instanceof \Drupal\node\NodeInterface) {
+  			$nid = $node->id();
+		}
+    	
+    	$id_planilla = $form_state->getValue('field_id_malla')[0]['value'];
+		$query = \Drupal::entityTypeManager()->getStorage('node')->getQuery();
+        $query->accessCheck(TRUE);
+		$query->condition('status', 1);
+    	$query->condition('field_id_malla', $id_planilla);
+    	$group = $query->orConditionGroup()
+				->condition('type', 'actividad_ejecutada')
+				->condition('type', 'integral_usuario');
+		$existe_planilla = $query->condition($group)->execute();
+    	// Verificar que no exista id planilla en otra actividad
+		if (!empty($existe_planilla)) {
+        	foreach ($existe_planilla as $idcontent) {
+        		if ($idcontent != $nid ) {
+                	$form_state->setErrorByName('field_id_malla', t('Ya existe ID Planilla en otra actividad.'));
+                }
+        	}
+			
+		}
+      
+      $fecha_actual = date("Y-m-d"); 
+      $plazo = \Drupal::config('Configuraciones.settings')->get('plazomalla'); // Día de cierre
+      $actual = strtotime(date("Y-m-d"));
+      $mes_anterior_ = date("Y-m-d", strtotime("-1 month", $actual));
+      $mes_anterior = date("m", strtotime($mes_anterior_));
+      $mes_actual = date("m");
+      $dia_actual = date("d");
+      
+      $mes_fecha_seleccionada = '';
+      $annio_fecha_seleccionada =  '';
+      $fecha = $form_state->getValue('field_fecha_realizada_act');
+      
+      $date_value = isset($form_state->getValue('field_fecha_realizada_act')[0]) ? $form_state->getValue('field_fecha_realizada_act')[0]['value']: "";
+      $resta = 0;
+      	
+      if (!empty($date_value)) {
+      	$date = new DrupalDateTime(date('Y-m-d H:i',strtotime($date_value)));
+        $value = $date->format('Y-m-d'); 
+      	$mes_fecha_seleccionada = $date->format('m');	
+      	$annio_fecha_seleccionada = $date->format('Y');
+      	$dateDifference = strtotime(date("Y-m-d")) - strtotime($value);      
+      	$resta = $dateDifference/86400;
+        
+      }
+      $meses_especiales = array("09","10"); // array de meses a ingresar (caso especial de act anteriores)
+      $user = \Drupal::currentUser()->getRoles();
+     
+     if (!in_array("administrator", $user)) {
+      if (($dia_actual > $plazo && $mes_fecha_seleccionada != $mes_actual) || $resta < 0) {
+      	
+          $message = 'Error, El Plazo de fecha está vencido. Sólo podrán entrar actividades del mes actual!.';
+          $type = 'error';
+          //drupal_set_message($message, $type);
+          $form_state->setErrorByName("Campo Fecha Realizada",t('El Plazo de fecha está vencido. Sólo podrán entrar actividades del mes actual.'));
+          //watchdog($type, $message);  
+      //}elseif ($mes_fecha_seleccionada != $mes_actual && $mes_fecha_seleccionada != $mes_anterior && $mes_fecha_seleccionada != '01') {
+      }elseif (($mes_fecha_seleccionada != $mes_actual && $mes_fecha_seleccionada != $mes_anterior) || $resta < 0) {
+          $message = 'Error. No puede entrar fechas fuera del mes actual o mes anterior.';
+          $type = 'error';
+          //drupal_set_message($message, $type);
+          $form_state->setErrorByName("Campo Fecha Realizada",t('No puede entrar fechas fuera del mes actual o mes anterior.!'));
+          //watchdog($type, $message);
+      } 
+      elseif($annio_fecha_seleccionada != date('Y'))
+      {
+    	 //$form_state->setErrorByName("Campo Fecha Realizada",t('No puede entrar fechas fuera del año actual.!'));
+      }
+     } 
+     
+    }
+    
+ 
+  }
+
+function biblored_module_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  
+  if ($form['#id'] == 'views-exposed-form-reporteactividadesrealizadas-page-4') {
+
+    if (array_key_exists('field_activities_target_id', $form)) {
+    }
+  }
+}
+/**
+ * Buscar datos de los campos de una planilla específica
+ */
+function buscarPlanillaAjaxCallback(&$form, FormStateInterface $form_state) {
+	
+	$commands = [];
+  	$response = new AjaxResponse();
+	$servicio = new EvEndpoint;
+	$arguments = [];
+	$planilla = $form_state->getValue('field_id_malla');
+	if (!empty($planilla)) {
+    	$id_planilla = $planilla[0]['value'];
+    	$uri_totales = "https://intranet.biblored.net/planilla/totales.php?identificador=". $id_planilla ."&tipo_identificador=id_planilla";
+    	$totales_planilla = $servicio->serviciojson($uri_totales);
+        if (!empty($totales_planilla)) {
+        			
+        			$total = $totales_planilla['total']; 
+        			//sexo
+                	$mujeres = $totales_planilla['sexo']['Mujeres']; 
+                    $hombres = $totales_planilla['sexo']['Hombres']; 
+                    $intersexual = $totales_planilla['sexo']['Intersexuales'];
+                	$no_reporta_sexo = $totales_planilla['sexo']['No_reporta'];
+                	// Poblacion
+                    $artesanos = $totales_planilla['poblacion']['Artesanos'];
+                    $afro = $totales_planilla['poblacion']['Afros'];
+                    $comunidad_Negra = $totales_planilla['poblacion']['Comunidad_Negras'];
+                    $palenqueros = $totales_planilla['poblacion']['Palenqueros'];
+                    $campesinos = $totales_planilla['poblacion']['Campesinos'];
+                    $firmantes = $totales_planilla['poblacion']['Firmantes'];
+                    $habitante_calle = $totales_planilla['poblacion']['Habitantes_calle'];
+                    $cuidadoras = $totales_planilla['poblacion']['Cuidadoras'];
+                    $migrante = $totales_planilla['poblacion']['Migrantes'];
+                    $privadas_libertad = $totales_planilla['poblacion']['Privadas_libertad'];
+                    $actividades_sexuales = $totales_planilla['poblacion']['Actividades_sexuales'];
+                    $victima_conflicto = $totales_planilla['poblacion']['Victimas_conflicto'];
+                    $raizales = $totales_planilla['poblacion']['Raizales'];
+                    $grom = $totales_planilla['poblacion']['Grom'];
+                    $indigenas = $totales_planilla['poblacion']['Indigenas'];
+                    $lgbti = $totales_planilla['poblacion']['LGBTIQ'];
+                	//$todos_poblacion = $totales_planilla['poblacion']['Todos'];
+                	$ninguna_poblacion = $totales_planilla['poblacion']['Ninguna'];
+                	$no_reporta_poblacion = $totales_planilla['poblacion']['No_reporta'];
+                    
+                	// orientacion
+                    $homosexual = $totales_planilla['orientacion']['Homosexuales'];
+                    $bisexual = $totales_planilla['orientacion']['Bisexuales'];
+                    $heterosexuales = $totales_planilla['orientacion']['Heterosexuales'];
+                	$no_reporta_orientacion = $totales_planilla['orientacion']['No_reporta'];
+                	// discapacidad
+                	$fisica = $totales_planilla['discapacidad']['Fisica'];
+                    $multiple = $totales_planilla['discapacidad']['Multiple'];
+                    $auditiva = $totales_planilla['discapacidad']['Auditiva'];
+        			$visual = $totales_planilla['discapacidad']['Visual'];
+                    $psicosocial = $totales_planilla['discapacidad']['Psicosocial'];
+                    $cognitiva = $totales_planilla['discapacidad']['Cognitiva'];
+                    $sordo_ceguera = $totales_planilla['discapacidad']['Sordo-ceguera'];
+                	$no_reporta_discapacidad = $totales_planilla['discapacidad']['No_reporta'];
+                	$ninguna_discapacidad = $totales_planilla['discapacidad']['Ninguna'];
+                    
+                	// Edad
+                	$asistentes_0_5 = $totales_planilla['edad']['asistentes_0_5'];
+                    $asistentes_6_12 = $totales_planilla['edad']['asistentes_6_12'];
+                    $asistentes_13_18 = $totales_planilla['edad']['asistentes_13_18'];
+                    $asistentes_19_27 = $totales_planilla['edad']['asistentes_19_27'];
+                    $asistentes_28_60 = $totales_planilla['edad']['asistentes_28_60'];
+                    $asistentes_61 = $totales_planilla['edad']['asistentes_61'];
+                	// Identidad de género
+                	$cisgenero = $totales_planilla['identidad']['Cisgenero'];
+                	$transgenero = $totales_planilla['identidad']['Transgenero'];
+                	$otro_identidad = $totales_planilla['identidad']['Otro'];
+                	$no_reporta_genero = $totales_planilla['identidad']['No_reporta'];
+        			$planilla =  $totales_planilla['planilla'];
+        			// Crear array con los datos obtenidos del servicio Planilla
+        			$arguments["planilla"] = $planilla;
+        			$arguments["total"] = $total;
+        			$arguments["mujeres"] = $mujeres;
+        			$arguments["hombres"] = $hombres;
+        			$arguments["intersexuales"] = $intersexual;
+        			$arguments["no_reporta_sexo"] = $no_reporta_sexo;
+        
+        			$arguments["Artesanos"] = $artesanos;
+        			$arguments["Afros"] = $afro;
+        			$arguments["Comunidad_Negras"] = $comunidad_Negra;
+        			$arguments["Palenqueros"] = $palenqueros;
+        			$arguments["Campesinos"] = $campesinos;
+        			$arguments["Firmantes"] = $firmantes;
+        			$arguments["Habitantes_calle"] = $habitante_calle;
+        			$arguments["Cuidadoras"] = $cuidadoras;
+        			$arguments["Migrantes"] = $migrante;
+        			$arguments["Privadas_libertad"] = $privadas_libertad;
+        			$arguments["Actividades_sexuales"] = $actividades_sexuales;
+        			$arguments["Victimas_conflicto"] = $victima_conflicto;
+        			$arguments["Raizales"] = $raizales;
+        			$arguments["Grom"] = $grom;
+        			$arguments["Indigenas"] = $indigenas;
+        			$arguments["LGBTIQ"] = $lgbti;
+        			//$arguments["Todos_poblacion"] = $todos_poblacion;
+        			$arguments["Ninguna_poblacion"] = $ninguna_poblacion;
+        			$arguments["No_reporta_poblacion"] = $no_reporta_poblacion;			
+        			$arguments["Homosexuales"] = $homosexual;
+        			$arguments["Bisexuales"] = $bisexual;
+        			$arguments["Heterosexuales"] = $heterosexuales;
+        			$arguments["No_reporta_orientacion"] = $no_reporta_orientacion;
+        			$arguments["Fisica"] = $fisica;
+        			$arguments["Multiple"] = $multiple;
+        			$arguments["Visual"] = $visual;
+        			$arguments["Auditiva"] = $auditiva;
+        			$arguments["Psicosocial"] = $psicosocial;
+        			$arguments["Cognitiva"] = $cognitiva;
+        			$arguments["Sordo-ceguera"] = $sordo_ceguera;
+        			$arguments["No_reporta_discapacidad"] = $no_reporta_discapacidad;
+        			$arguments["Ninguna_discapacidad"] = $ninguna_discapacidad;
+        			$arguments["asistentes_0_5"] = $asistentes_0_5;
+        			$arguments["asistentes_6_12"] = $asistentes_6_12;
+        			$arguments["asistentes_13_18"] = $asistentes_13_18;
+        			$arguments["asistentes_19_27"] = $asistentes_19_27;
+        			$arguments["asistentes_28_60"] = $asistentes_28_60;
+        			$arguments["asistentes_61"] = $asistentes_61;
+        			$arguments["Cisgenero"] = $cisgenero;
+        			$arguments["Transgenero"] = $transgenero;
+        			$arguments["Otro_identidad_genero"] = $otro_identidad;
+        			$arguments["No_reporta_genero"] = $no_reporta_genero;
+        				
+        			$response->addCommand(new InvokeCommand(NULL, 'planilla', [$arguments]));
+        }
+        return $response;        
+    }
+		
+	//$totales_planilla = $servicio->serviciojson($uri_totales);
+	
+	//$arguments = [10, 20, 30];
+	
+	
+	
+
+    //$node = \Drupal::routeMatch()->getParameter('node');
+    //$values = $form_state->getValues();
+    //$title = $form_state->getValue('title'); 
+    //$form['field_cisgenero'][0]['value']['#default_value']= 100;
+  	//$response->addCommand(new InvokeCommand('#edit-field-cisgenero-0-value', array('1000')));
+  	//$response->addCommand(new ReplaceCommand('#edit-field-cisgenero-0-value', $form['field_cisgenero']['widget'][0]['value']['#default_value'] = 100));
+	//$form['field_cisgenero'][0]['value'] = 66;
+      // Place the text of the selected option in our textfield.
+    //return  $form['field_cisgenero'];
+	//$form['field_cisgenero'][LANGUAGE_NONE][0]['value']['#default_value'] =  100;
+	//$form_state['rebuild'] = TRUE;
+	
+   }
+/*
+function biblored_module_views_pre_render($view) {
+  
+  switch ($view->id()) {
+    case 'reporte_de_actividades_gestionadas':
+    
+      //  override the global custom text field value
+      $view->field['nothing']->options['alter']['text'] = 'My custom text';
+    break;
+  }
+} */
+/*
+function biblored_module_preprocess_views_view_field(&$variables) {
+  $sw = 0;
+  $plazo = \Drupal::config('Configuraciones.settings')->get('plazomalla');
+  
+  
+  $current_user = \Drupal::currentUser();
+  $roles = $current_user->getRoles();
+  
+  if ($roles[1] != 'administrator'){
+    $sw = 1;
+  }
+  
+  $view = $variables['view'];
+  $field = $variables['field'];
+  
+  if ($view->storage->id() == 'reporteactividadesrealizadas' &&
+  $view->current_display == 'page_1' && $field->field == 'title') {
+    if (date("j") > $plazo && $sw==1) {
+      $variables['output'] = 'Act. vencida';
+    }else{
+      $variables['output'] = $variables['output'];
+    }
+  }
+} 
+*/
+/**
+ * Implements hook_preprocess_cshs_select.
+ *
+ * This disables chosen on the menu cshs dropdown.
+ */
+function biblored_module_preprocess_cshs(array &$variables) {
+  $variables['attributes']['class'][] = 'chosen-disable';
+}

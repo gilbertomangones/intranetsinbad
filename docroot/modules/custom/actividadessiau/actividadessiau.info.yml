@@ -1,0 +1,6 @@
+name: Modulo para actividades Siau
+description: Drupal 8, 9 module dea actividades Siau
+package: Custom
+type: module
+core_version_requirement: ^8 || ^9
+configure: actividadessiau.settings

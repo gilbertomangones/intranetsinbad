@@ -1,0 +1,6 @@
+name: Modulo para actividades autonomas
+description: Drupal 8 y 9 module dea actividades autonomas
+package: Custom
+type: module
+core_version_requirement: ^8 || ^9
+configure: actividadesautonomas.settings

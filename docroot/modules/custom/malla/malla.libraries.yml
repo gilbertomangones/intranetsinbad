@@ -1,0 +1,6 @@
+malla:
+  version: VERSION
+  js:
+    js/funciones.js: {}
+  dependencies:
+    - core/jquery

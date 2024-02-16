@@ -1,0 +1,272 @@
+<?php
+use Drupal\reportes\Controller\FuncionesController;
+use Drupal\node\Entity\Node;
+use Drupal\Core\Form\FormStateInterface;
+use \Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Form\FormBase;
+use Drupal\Core\Ajax\OpenModalDialogCommand;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\HtmlCommand;
+use Drupal\Core\Ajax\ReplaceCommand;
+
+
+function actividadesmisionales_node_prepare_form(\Drupal\Core\Entity\EntityInterface $entity, $operation, \Drupal\Core\Form\FormStateInterface $form_state) {
+	
+	$subprograma = isset($_GET['subprograma']) ? $_GET['subprograma'] :"";
+	
+	$biblioteca = isset($_GET['biblioteca']) ? $_GET['biblioteca'] : "";
+	
+	$plan = isset($_GET['plan']) ? $_GET['plan'] : "";
+    
+    $taxonomyname = isset($_GET['namesubp']) ? $_GET['namesubp'] : '';
+	
+	if($subprograma) {
+	    $entity->get('field_linea')->set(0, $subprograma);
+        $entity->get('title')->set(0, $taxonomyname);
+	}
+	if($biblioteca) {
+	    $entity->get('field_biblioteca')->set(0, $biblioteca);
+	}
+	if($plan) {
+	    $entity->get('field_concesion')->set(0, $plan);
+	}
+	
+    //$entity->get('field_id_actividad_agenda')->set(0, 0);
+	
+}
+function actividadesmisionales_submit_ajax($form, &$form_state){
+  
+  $commands = array();
+  $response = new AjaxResponse();
+
+  //$commands[] = ajax_command_remove('.l-messages');
+  if($form_state->hasAnyErrors()){
+    //$commands[] = ajax_command_replace(NULL, drupal_render($form));
+  }
+  else{
+    $node = \Drupal::routeMatch()->getParameter('node');
+    $new_form_state = array();
+    $new_form_state['build_info']['args'][] = $node;
+    $new_form_state['no_redirect'] = TRUE;
+    $new_form_state['input'] = array();
+    $new_form_state['values'] = array();
+    //$new_form_state['method'] = $form_state['method'];
+    //$new_form = drupal_rebuild_form('finding_node_form', $new_form_state);
+
+    //$commands[] = ajax_command_replace(NULL, drupal_render($new_form));
+  }
+  //$commands[] = ajax_command_prepend('.my_top_message', '<section class="l-messages row"><div class="columns">' . theme('status_messages') . '</div></section>');
+   $message = [
+      '#theme' => 'status_messages',
+      '#message_list' => drupal_get_messages(),
+    ];
+   $messages = \Drupal::service('renderer')->render($message);
+	$response->addCommand(
+      new HtmlCommand(
+        '.result_message ',
+        '<div class="my_top_message use-ajax" data-dialog-type="modal">' . t('Cambie solo datos que necesite antes de volver a guardar un nuevo evento. ') . $messages . '</div>')
+    );
+	    
+    return $response;
+  //return array('#type' => 'ajax', '#commands' => $commands);
+  
+}
+/**
+ * Alter form especiales
+ */
+function actividadesmisionales_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) { 
+   //$current_node = $form_state->getFormObject()->getEntity();
+    //echo $form_id;
+    if ($form_id == 'node_malla_programacion_detallada_edit_form') {
+    	
+  		$form['duplicate'] = [
+        	'#weight' => 999,
+    		'#type' => 'button',
+    		'#value' => t('Duplicar'),
+    		'#ajax' => [
+      			'callback' => 'saveDataAjaxCallback',
+      			'event' => 'click',
+             '#weight' => 99,
+
+    		]
+  		];
+    }
+    if ($form_id == "node_malla_programacion_detallada_form" ) {
+        //var_dump($form);
+    	
+    	$form['message'] = [
+      		'#type' => 'markup',
+      		'#markup' => '<div class="result_message"></div>',
+        	'#weight' => 20,
+    	];    
+    	$form['#prefix'] = '<div id="wrapper">';
+  		$form['#suffix'] = '</div>';
+ 		$form['actions']['submit']['#ajax'] = array(
+    		'callback' => 'actividadesmisionales_submit_ajax',
+    		'wrapper' => 'finding-form-wrapper'
+  		);
+    
+    }
+	if ($form_id == "node_actividades_misionales_form" ) {
+		// Get current tid plan and program
+		$param = \Drupal::request()->query->all();
+		$program = $param['subprograma']; // Current program
+		$plan = $param['plan']; // Current Plan
+		// Verificar si existe el programa, que lo obtiene request url
+		$tipo_actividad = "";
+		if (!empty($program)) {
+			$termino = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($program);
+			$tipo_actividad = isset($termino->get('field_tipo_evento')->getValue()[0]) ? $termino->get('field_tipo_evento')->getValue()[0]['target_id'] : '';
+			if ($tipo_actividad) {
+				$term_name_tipo_act = \Drupal\taxonomy\Entity\Term::load($tipo_actividad)->get('name')->value;
+			}
+			$ind_proceso = $termino->get('field_indicador_proceso')->getValue();
+			$ind_producto = $termino->get('field_indicador_producto')->getValue();
+			//var_dump($ind_proceso);
+			//var_dump($ind_producto);
+        	//Deshabilitar campos para que no entren info erada
+			if (empty($ind_proceso)) {
+				$form['field_avance_meta_proceso']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+            }
+			if (empty($ind_producto)) {
+				$form['field_avance_meta_producto']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+            }
+		}
+	    // Query in plan_de_accion_concesion
+		$query = \Drupal::entityTypeManager()->getStorage('node')->getQuery();
+		$query->condition('status', 1);
+		$query->condition('type', 'plan_de_accion_concesion');
+		$query->condition('field_concesion', $plan);
+		$query->condition('field_linea', $program);
+
+		$programs_plans = $query->execute();
+		$meta_proceso = 0;
+		$meta_producto = 0;
+		//var_dump($programs_plans);
+		if ($programs_plans) {
+			$programs_storage = \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($programs_plans);
+			// Get values each program
+			
+			foreach ($programs_storage as $node) {
+            	
+				$meta_proceso = $node->get('field_proc_interna')->value + $node->get('field_proc_externo')->value;
+				$meta_producto = $node->get('field_prod_interno')->value + $node->get('field_prod_externo')->value;
+			}
+		}		
+		//var_dump($meta_producto);
+		//2. Get advanced
+		// Query in actividades_misionales (Especiales)
+		$query_advanced = \Drupal::entityTypeManager()->getStorage('node')->getQuery();
+		$query_advanced->condition('status', 1);
+		$query_advanced->condition('type', 'actividades_misionales');
+		$query_advanced->condition('field_concesion', $plan);
+		$query_advanced->condition('field_linea', $program);
+
+		$programs_missionals_advanced = $query_advanced->execute();
+		$meta_proceso_advanced = 0;
+		$meta_producto_advanced = 0;
+		if ($programs_missionals_advanced) {
+			$programs_storage_advanced = \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($programs_missionals_advanced);
+			// Get values each program
+			foreach ($programs_storage_advanced as $node) {
+				$meta_proceso_advanced += $node->get('field_avance_meta_proceso')->value;
+				$meta_producto_advanced += $node->get('field_avance_meta_producto')->value;
+			}
+		}
+
+		// Total Planned
+		// Total Advanced.
+		
+        //if (!isset($current_node->nid) || isset($current_node->is_new)) {
+        	$form['field_total_plan_proceso']['widget'][0]['value']['#default_value'] = $meta_proceso;
+    		$form['field_total_plan_producto']['widget'][0]['value']['#default_value'] = $meta_producto;
+    		$form['field_total_plan_proceso']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+            $form['field_total_plan_producto']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+    
+			$form['field_valor_proceso_avanzado']['widget'][0]['value']['#default_value'] = $meta_proceso_advanced;
+			$form['field_valor_proceso_avanzado']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+			$form['field_valor_producto_avanzado']['widget'][0]['value']['#default_value'] = $meta_producto_advanced;
+			$form['field_valor_producto_avanzado']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+        //}
+    	// Tipo actividad
+		if (!empty($tipo_actividad)) {
+			$form['field_tipo_actividad_relizada']['widget']['#options'] = array($tipo_actividad => $term_name_tipo_act);
+		}
+	}
+   if ($form_id == 'node_actividades_misionales_edit_form' || $form_id == 'node_actividades_misionales_form') {
+		$form['#validate'][] = 'actividadesmisionales_node_form_validate';
+	}
+}
+function actividadesmisonales_replicar_form(&$form, FormStateInterface $form_state) {
+    $entity = $form_state->getFormObject()->getEntity();
+    $entity->set('status', '1');
+    $entity->save();
+}
+function saveDataAjaxCallback(&$form, FormStateInterface $form_state) {
+	//$node = $form_state->getFormObject()->getEntity();
+	
+	$commands = array();
+  	$response = new AjaxResponse();
+	if($form_state->hasAnyErrors()){
+    //$commands[] = ajax_command_replace(NULL, drupal_render($form));
+  }
+  else{
+    $node = \Drupal::routeMatch()->getParameter('node');
+    $new_form_state = array();
+    $new_form_state['build_info']['args'][] = $node;
+    $new_form_state['no_redirect'] = TRUE;
+    $new_form_state['input'] = array();
+    $new_form_state['values'] = array();
+    
+    $values = $form_state->getValues();
+    $title = $form_state->getValue('title'); // Empty when #tree = FALSE.
+	$node = \Drupal::entityTypeManager()->getStorage('node')->create(array(
+  		'type'        => 'malla_programacion_detallada',
+  		'title'       => $title,
+	));
+	 //$node->save();
+  }
+  //$commands[] = ajax_command_prepend('.my_top_message', '<section class="l-messages row"><div class="columns">' . theme('status_messages') . '</div></section>');
+   $message = [
+      '#theme' => 'status_messages',
+      '#message_list' => drupal_get_messages(),
+    ];
+   $messages = \Drupal::service('renderer')->render($message);
+	$response->addCommand(
+      new HtmlCommand(
+        '.result_message ',
+        '<div class="my_top_message use-ajax" data-dialog-type="modal">' . t('Cambie solo datos que necesite antes de volver a guardar un nuevo evento. ') . $messages . '</div>')
+    );
+	    
+    return $response;
+	
+   }
+function guardar($form, FormStateInterface $form_state){
+	
+}
+function actividadesmisionales_node_form_validate($form, FormStateInterface $form_state){
+	$node = $form_state->getFormObject()->getEntity();
+	if ($node->getType() == 'actividades_misionales' &&  ($node->is_new)) {
+		$programa = $node->get('field_linea')->getvalue();
+		$fecha = $node->get('field_fecha_realizada_act')->getValue();
+		
+		if (isset($programa) && isset($fecha)) {
+			$programa_buscado = $programa[0]['target_id'];
+			$fecha_buscada = $fecha[0]['value'];
+			$fecha_ingresada = date('Y-m-01', strtotime($fecha_buscada));
+			
+			$query = \Drupal::entityTypeManager()->getStorage('node')->getQuery();
+			$query->condition('status', 1);
+			$query->condition('type', 'actividades_misionales');
+			$query->condition('field_linea', $programa_buscado);
+			$query->condition('field_fecha_realizada_act', $fecha_ingresada . 'T05:00:00');
+
+			$existe_actividad = $query->execute();
+			
+			if ($existe_actividad) {
+				$form_state->setErrorByName('field_linea', t('Ya existe esta actividad (Programa y fecha de la actividad) .'));
+			}
+		}
+		
+	}
+}

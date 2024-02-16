@@ -1,0 +1,22 @@
+configuraciones.Form_settings:
+  path: 'admin/settings/configuracionesform'
+  defaults:
+    _form: 'Drupal\configuraciones\Form\ConfiguracionesForm'
+    _title: 'Configuraciones de variables globales Biblored'
+  requirements:
+    _permission: 'administer site configuration'
+configuraciones.actualizarcontenidos:
+  path: 'admin/settings/actualizarcontenidos'
+  methods:  [GET]
+  defaults:
+    _controller: 'Drupal\configuraciones\Controller\Configuraciones::actualizarnodos'
+  requirements:
+    _permission: 'Configuraciones de actualizaciones Biblored'
+configuraciones.actualizar:
+  path: 'admin/settings/actualizarnodes'
+  methods:  [GET]
+  defaults:
+    _controller: 'Drupal\configuraciones\Controller\Configuraciones::actualizarnodosplan'
+  requirements:
+    _permission: 'Configuraciones de actualizaciones Biblored'
+  

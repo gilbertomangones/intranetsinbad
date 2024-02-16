@@ -1,0 +1,38 @@
+{#
+/**
+ * @file
+ */
+#}
+
+<h1>REPORTE DE SERVICIOS DE BIBLIOTECA - PRÉSTAMOS</h1>
+{% if conectado is null %}
+<H3>Biblioteca:</H3>
+<H3>Fechas:::</H3>
+<div class="row">
+	<div class="col-md-3">Braille: {{  contenido['BRAIL'][0] }}</div >
+	<div class="col-md-3">Braille infantil: {{  contenido['BRINF'][0] }}</div>
+	<div class="col-md-3">Braille literatura: {{  contenido['BRLIT'][0] }}</div>
+	<div class="col-md-3">Colección infantil: {{  contenido['LBINF'][0] }}</div>
+	<div class="col-md-3">Colección general: {{  contenido['LIBRG'][0] }}</div>
+	<div class="col-md-3">Literatura: {{  contenido['LITER'][0] }}</div>
+	<div class="col-md-3">Consulta en sala: {{  contenido['REFER'][0] }}</div>
+	<div class="col-md-3">CD música: {{  contenido['CDMUS'][0] }}</div>
+	<div class="col-md-3">CD: {{  contenido['CD'][0] }}</div>
+	<div class="col-md-3">Portatil: {{  contenido['CPORT'][0] }}</div>
+	<div class="col-md-3">DVD: {{  contenido['DVD'][0] }}</div>
+	<div class="col-md-3">Publicación periódica: {{  contenido['ISSUE'][0] }}</div>
+	<div class="col-md-3">Objeto: {{  contenido['OBJET'][0] }}</div>
+	<div class="col-md-3">Tablet: {{  contenido['TABLE'][0] }}</div>
+	<div class="col-md-3">VIDEO: {{  contenido['VIDEO'][0] }}</div>
+	<div class="col-md-3"> Blu ray: {{  contenido['BLRAY'][0] }}</div>
+	<div class="col-md-3">Caset: {{  contenido['CASET'][0] }}</div>
+	<div class="col-md-3">CD multimedia: {{  contenido['CDMUL'][0] }}</div>
+	<div class="col-md-3">E-reader: {{  contenido['EREAD'][0] }}</div>
+	<div class="col-md-3">Folleto: {{  contenido['FLLET'][0] }}</div>
+	<div class="col-md-3">Mapa: {{  contenido['MAPA'][0] }}</div>
+	<div class="col-md-3">Película: {{  contenido['VDVD'][0] }}</div>
+	<div class="col-md-3">Reservado: {{  contenido['RESER'][0] }}</div>
+	<div class="col-md-3">VH: {{  contenido['VH'][0] }}</div>
+	<div class="col-md-3">Partitura: {{  contenido['PARTI'][0] }} </div>
+</div>
+{% endif %}

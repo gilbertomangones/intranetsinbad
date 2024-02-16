@@ -1,0 +1,38 @@
+{#
+/**
+ * @file
+ */
+#}
+
+<h1>REPORTE DE SERVICIOS DE BIBLIOTECA - CONTEO DE VISITAS</h1>
+<H2>Biblioteca:</H2>
+<H2>Fechas:</H2>
+
+{% if conectado is null %}
+<table border="1" cellpadding="1" cellspacing="1" class="table table-responsive table-striped responsive-enable" id="serviciosconteo">  
+	    <tr>
+	    		<th>
+	    			<span>Espacio</span>
+	    		</th>
+	    		<th>
+	    			<span class="valor">VALOR</span>
+	    		</th>
+	    	</tr>
+	    {% for key,value in contenido %}
+			
+			<tr>
+	    		<td>
+	    			<span>{{ value.nombre }}</span>
+	    		</td>
+	    		<td>
+	    			<span class="valor">{{ value.te }}</span>
+	    		</td>
+	    	</tr>
+	    {% endfor %}
+	    
+</table> 
+
+
+{% else %}
+<h1>Sin conexión a la base de datos</h1>
+{% endif %}

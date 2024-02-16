@@ -1,0 +1,7 @@
+actividadesmisionales.ingresar:
+  path: '/actividades-especiales'
+  defaults:
+    _form: '\Drupal\actividadesmisionales\Form\ActividadMisionalesForm'
+    _title: 'Registro de actividades especiales'
+  requirements:
+    _permission: 'misionales programacion config'

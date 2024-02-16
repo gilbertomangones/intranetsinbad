@@ -1,0 +1,14 @@
+malla.programacion:
+  path: '/malla/programacionmalla'
+  defaults:
+    _form: '\Drupal\malla\Form\MallaForm'
+    _title: 'Registro de la programacion de la malla'
+  requirements:
+    _permission: 'malla config'
+malla.programaciondetalle:
+  path: '/malla/programacionmalladetalle'
+  defaults:
+    _form: '\Drupal\malla\Form\MallaProgramacionForm'
+    _title: 'Registro de la programacion de la malla'
+  requirements:
+    _permission: 'malla config'

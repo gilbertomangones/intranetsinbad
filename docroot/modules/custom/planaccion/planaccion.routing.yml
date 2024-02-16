@@ -1,0 +1,7 @@
+planaccion.programacion:
+  path: '/malla/programacionplanaccion'
+  defaults:
+    _form: '\Drupal\planaccion\Form\PlanForm'
+    _title: 'Registro de la programacion del Plan de acción'
+  requirements:
+    _permission: 'plan accion config'

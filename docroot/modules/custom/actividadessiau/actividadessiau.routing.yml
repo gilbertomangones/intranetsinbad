@@ -1,0 +1,23 @@
+actividadessiau.ingresar:
+  path: '/actividades-siau'
+  defaults:
+    _form: '\Drupal\actividadessiau\Form\ActividadSiauForm'
+    _title: 'Registro de actividades Siau'
+  requirements:
+    _permission: 'siau programacion config'
+
+actividadessiau.ingresarextras:
+  path: '/actividades-extras'
+  defaults:
+    _form: '\Drupal\actividadessiau\Form\ActividadExtrasForm'
+    _title: 'Reporte de préstamo y consulta en sala (Manualmente)'
+  requirements:
+    _permission: 'extras programacion config'
+    
+actividadessiau.territoriales:
+  path: '/actividades-territoriales'
+  defaults:
+    _form: '\Drupal\actividadessiau\Form\ActividadTerritorialForm'
+    _title: 'Registro de actividades Espacios Alternativos de Lectura'
+  requirements:
+    _permission: 'territoriales programacion config'

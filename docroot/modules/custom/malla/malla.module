@@ -1,0 +1,17 @@
+<?php
+use Drupal\reportes\Controller\FuncionesController;
+use Drupal\node\Entity\Node;
+use Drupal\Core\Form\FormStateInterface;
+use \Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Datetime\DrupalDateTime;
+
+function malla_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+	if ($form_id == 'node_actividad_ejecutada_form') {
+		$canal = \Drupal::request()->query->get('modalidad');
+    	//$form['field_fecha_realizada_act']['widget']['#default_value'] = date('Y-m-d', strtotime('now'));
+		if ($canal != ""){
+        	$form['field_lugar_realizado']['widget']['#default_value'] = array($canal);
+            $form['field_lugar_realizado']['widget'][$canal]['#attributes'] = array('checked' => 'checked');    
+		}
+	}
+}

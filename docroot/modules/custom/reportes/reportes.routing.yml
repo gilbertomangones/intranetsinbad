@@ -1,0 +1,62 @@
+reportes.planaccion:
+  path: 'reportes/planoperativo-informe'
+  defaults: 
+    _form: 'Drupal\reportes\Form\GenerarReportesForm'
+    _title: 'Reporte Malla vs Ejecución'
+  requirements:
+    _permission: 'reportes'
+reportes.informeedades:
+  path: 'reportes/informes-edades'
+  defaults: 
+    _form: 'Drupal\reportes\Form\GenerarReportesEdadesForm'
+    _title: 'Reporte Grupo Poblacional'
+  requirements:
+    _permission: 'access content'
+reportes.infopoblacional:
+  path: 'reportes/informe-poblacional'
+  defaults: 
+    _form: 'Drupal\reportes\Form\GenerarReportesPoblacionalForm'
+    _title: 'Reporte de asistentes por edad y género'
+  requirements:
+    _permission: 'access content'
+reportes.planaccion_operativo:
+  path: 'reportes/planaccion-operativo-actividades'
+  defaults: 
+    _form: 'Drupal\reportes\Form\Generar_123Form'
+    _title: 'Reporte Plan Acción vs Operativo (Planeado)'
+  requirements:
+    _permission: 'access content'
+reportes.planaccion_operativo_malla:
+  path: 'reportes/planaccion-malla'
+  defaults: 
+    _form: 'Drupal\reportes\Form\ReportePlanMallaForm'
+    _title: 'Reporte Plan Acción vs Malla (Planeado - mensual)'
+  requirements:
+    _permission: 'access content'
+reportes.operativomalla:
+  path: 'reportes/planmalla-actividades'
+  defaults: 
+    _form: 'Drupal\reportes\Form\ReporteMallaActForm'
+    _title: 'Reporte Malla - Actividades'
+  requirements:
+    _permission: 'access content'
+reportes.planaccion_actividades:
+  path: 'reportes/planaccion-vs-ejecucion'
+  defaults: 
+    _form: 'Drupal\reportes\Form\Generar_planaccion_ejecucionForm'
+    _title: 'Reporte Plan Acción vs Ejecución'
+  requirements:
+    _permission: 'access content'
+reportes.export_excel:
+    path: '/export-excel'
+    defaults:
+      _controller: '\Drupal\reportes\Controller\PhpExcelController::ExportExcel'
+    requirements:
+      _permission: 'access content'
+reportes.informeedadespoblacion:
+  path: 'reportes/informes-poblacion'
+  defaults: 
+    _form: 'Drupal\reportes\Form\GenerarGrupoPoblacionalForm'
+    _title: 'Reporte Grupo Poblacional'
+  requirements:
+    _permission: 'access content'

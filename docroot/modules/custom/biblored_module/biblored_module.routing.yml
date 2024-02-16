@@ -1,0 +1,183 @@
+biblored_module.actividades:
+  path: '/admin/actividades'
+  defaults:
+    _form: '\Drupal\biblored_module\Form\ActividadesForm'
+    _title: 'Listado de actividades'
+  requirements:
+    _permission: 'administer site configuration'
+
+biblored_module.afiliados:
+  path: 'v1/afiliados'
+  methods:  [GET]
+  defaults:
+    _controller: 'Drupal\biblored_module\Controller\EvEndpoint::afiliados'
+  requirements:
+    _permission: 'access content'
+
+biblored_module.afiliadosalepth:
+  path: '/v1/servicio-afiliados'
+  defaults:
+    _form: '\Drupal\biblored_module\Form\AfiliadosForm'
+    _title: 'Informe de afiliaciones - Pergamum'
+  requirements:
+    _access: 'TRUE'
+    #_permission: 'administer site configuration'
+
+biblored_module.afiliadosbd:
+  path: '/v1/servicio-afiliadosbd'
+  defaults:
+    _form: '\Drupal\biblored_module\Form\AfiliadosFormbd'
+    _title: 'Informe de afiliaciones - Biblioteca Digital'
+  requirements:
+    _access: 'TRUE'
+
+biblored_module:
+  path: 'v1/custom_endpoint'
+  methods:  [GET]
+  defaults:
+    _controller: 'Drupal\biblored_module\Controller\EvEndpoint::get'
+  requirements:
+    _permission: 'access content'
+
+biblored_module.miagenda:
+  path: '/miagenda'
+  defaults:
+    _form: '\Drupal\biblored_module\Form\AgendaForm'
+    _title: 'Listado de actividades de la Agenda - Portal web'
+  requirements:
+    _permission: 'malla programacion config'
+
+biblored_module.prestamos:
+  path: 'v1/prestamos'
+  methods:  [GET]
+  defaults:
+    _controller: 'Drupal\biblored_module\Controller\EvEndpoint::prestamos'
+  requirements:
+    _permission: 'access content'
+
+biblored_module.servicioprestamos:
+  path: '/v1/servicio-prestamos'
+  defaults:
+    _form: '\Drupal\biblored_module\Form\PrestamosForm'
+    _title: 'Informe préstamo y renovación de material bibliográfico - Pergamum'
+  requirements:
+    _access: 'TRUE'
+    #_permission: 'access content'
+
+biblored_module.servicioprestamosv2:
+  path: '/v1/servicios-prestamos'
+  defaults:
+    _form: '\Drupal\biblored_module\Form\PrestamosForm2'
+    _title: 'Informe préstamo y renovación de material bibliográfico - Pergamum'
+  requirements:
+    _access: 'TRUE'
+    #_permission: 'access content'
+    
+biblored_module.consultas:
+  path: 'v1/consultas'
+  methods:  [GET]
+  defaults:
+    _controller: 'Drupal\biblored_module\Controller\EvEndpoint::consultas'
+  requirements:
+    _permission: 'access content'
+
+biblored_module.servicioconsultas:
+  path: '/v1/servicio-consultas'
+  defaults:
+    _form: '\Drupal\biblored_module\Form\ConsultasForm'
+    _title: 'Informe consultas de material - Pergamum'
+  requirements:
+    _access: 'TRUE'
+    #_permission: 'access content'
+biblored_module.serviciosconsultas:
+  path: '/v1/servicios-consultas'
+  defaults:
+    _form: '\Drupal\biblored_module\Form\ConsultasForm2'
+    _title: 'Consultas de material - Pergamum'
+  requirements:
+    _access: 'TRUE'
+    #_permission: 'access content'
+biblored_module.conteo:
+  path: 'v1/conteo'
+  methods:  [GET]
+  defaults:
+    _controller: 'Drupal\biblored_module\Controller\EvEndpoint::conteo'
+  requirements:
+    _permission: 'access content'
+
+biblored_module.conteovisitas:
+  path: '/v1/servicio-conteovisitas'
+  defaults:
+    _form: '\Drupal\biblored_module\Form\ConteoForm'
+    _title: 'Registro de ingresos o visitas a espacios de la Red'
+  requirements:
+    _access: 'TRUE'
+    #_permission: 'access content'
+
+biblored_module.conteovisitasv2:
+  path: '/v1/servicios-conteovisitas'
+  defaults:
+    _form: '\Drupal\biblored_module\Form\ConteoFormv2'
+    _title: 'Registro de ingresos o visitas a espacios de la Red'
+  requirements:
+    _access: 'TRUE'
+    #_permission: 'access content'
+    
+  #biblored_module.conteovisitas:
+  #path: '/miagenda-conteo'
+  #defaults:
+   # _form: '\Drupal\biblored_module\Form\conteo'
+   # _title: 'Conteo de visitas'
+  #requirements:
+  #  _permission: 'access content'
+
+
+biblored_module.programacionmalla:
+  path: '/v1/configurarmalla'
+  defaults:
+    _form: '\Drupal\biblored_module\Form\ProgramacionForm'
+    _title: 'Configurar Programación Mensual'
+  requirements:
+    _permission: 'access content'
+
+biblored_module.programacionmetasconsecion:
+  path: '/v1/configurarmetasconcesion'
+  defaults:
+    _form: '\Drupal\biblored_module\Form\ConcesionForm'
+    _title: 'Configurar metas plan de acción'
+  requirements:
+    _permission: 'access content'
+
+biblored_module.prestamosinter:
+  path: '/v1/servicio-interbibliotecarios'
+  defaults:
+    _form: '\Drupal\biblored_module\Form\InterbibliotecariosForm'
+    _title: 'Reporte de préstamo interbibliotecario'
+  requirements:
+    _access: 'TRUE'
+    #_permission: 'access content'
+
+biblored_module.prestamopib:
+  path: '/v1/servicio-interno-pib'
+  defaults:
+    _form: '\Drupal\biblored_module\Form\InterpibForm'
+    _title: 'Reporte de préstamo interno PIB'
+  requirements:
+    _access: 'TRUE'
+    #_permission: 'access content'
+
+biblored_module.titulosinter:
+  path: '/v1/servicio-interbib-titulos'
+  defaults:
+    _form: '\Drupal\biblored_module\Form\TitulosForm'
+    _title: 'Reporte de préstamo interbibliotecario - Títulos'
+  requirements:
+    _permission: 'access content'    
+
+biblored_module.mimallainterna:
+  path: '/mimallainterna'
+  defaults:
+    _form: '\Drupal\biblored_module\Form\MallainternaForm'
+    _title: 'Listado de actividades de la malla detallada'
+  requirements:
+    _permission: 'malla programacion config'

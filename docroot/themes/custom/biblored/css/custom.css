@@ -1,0 +1,101 @@
+/**
+
+    INDICE:
+    - variables
+    - header
+    - footer
+    - formularios
+    - page miagenda
+
+ */
+/*================================================
+=    variables                                   =
+================================================*/
+/*= End of variables ===========================*/
+/*================================================
+=    header                                      =
+================================================*/
+header.navbar {
+  background-color: initial;
+  border: initial;
+  display: flex;
+  flex-direction: row-reverse;
+  min-height: initial;
+  margin: auto;
+  padding: 0;
+  text-align: right; }
+  header.navbar .navbar-header #account-userlogout > a {
+    padding: 5px; }
+
+.main-container .region-header {
+  background: initial;
+  padding: 0; }
+  .main-container .region-header .navbar-brand {
+    display: none; }
+  .main-container .region-header #block-mainnavigation ul#superfish-main {
+    background: #2E3D50;
+    margin: 3px 0 15px;
+    padding: 0; }
+    .main-container .region-header #block-mainnavigation ul#superfish-main li a,
+    .main-container .region-header #block-mainnavigation ul#superfish-main li span {
+      background-color: #2E3D50; }
+    .main-container .region-header #block-mainnavigation ul#superfish-main > li:hover > a,
+    .main-container .region-header #block-mainnavigation ul#superfish-main > li:hover li:hover > a {
+      background-color: #3893D1; }
+    .main-container .region-header #block-mainnavigation ul#superfish-main .sf-sub-indicator {
+      display: none; }
+
+/*= End of header ==============================*/
+/*================================================
+=    footer                                      =
+================================================*/
+.footer {
+  border: none;
+  background: initial;
+  margin: 0 auto;
+  padding: 0 15px; }
+  .footer .region-footer {
+    background-color: #2E3D50;
+    margin: 30px 0;
+    padding: 30px; }
+  .footer a {
+    color: #fff; }
+
+/*= End of footer  =============================*/
+/*================================================
+=    formularios                                 =
+================================================*/
+form button#edit-submit,
+form #block-iniciodesesion .form-submit {
+  background-color: #3893D1;
+  margin: 10px 0; }
+form .field-group-fieldset {
+  border-color: #d1d1d1;
+  margin: 20px 0; }
+form .select-wrapper {
+  border: 1px solid #d1d1d1;
+  border-radius: 5px;
+  margin: 0 10px;
+  padding: 7px 10px; }
+form .filter-help a,
+form .help-block a {
+  color: #333; }
+
+/*= End of formularios =========================*/
+/*================================================
+=    Section page miagenda                       =
+================================================*/
+.path-miagenda .table-responsive,
+.path-reportes .table-responsive {
+  height: 1000px;
+  overflow: auto;
+  position: relative; }
+  .path-miagenda .table-responsive thead tr:first-child th,
+  .path-reportes .table-responsive thead tr:first-child th {
+    background-color: #fff;
+    position: sticky;
+    top: 0; }
+
+/*= End page miagenda ==========================*/
+
+/*# sourceMappingURL=custom.css.map */

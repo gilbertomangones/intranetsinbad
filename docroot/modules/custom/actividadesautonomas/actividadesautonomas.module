@@ -1,0 +1,26 @@
+<?php
+
+function actividadesautonomas_node_prepare_form(\Drupal\Core\Entity\EntityInterface $entity, $operation, \Drupal\Core\Form\FormStateInterface $form_state) {
+	
+	$subprograma = isset($_GET['subprograma']) ? $_GET['subprograma'] :"";
+	
+	$biblioteca = isset($_GET['biblioteca']) ? $_GET['biblioteca'] : "";
+	
+	$plan = isset($_GET['plan']) ? $_GET['plan'] : "";
+    
+    $taxonomyname = isset($_GET['namesubp']) ? $_GET['namesubp'] : '';
+	
+	if($subprograma) {
+	    $entity->get('field_linea')->set(0, $subprograma);
+        $entity->get('title')->set(0, $taxonomyname);
+	}
+	if($biblioteca) {
+	    $entity->get('field_biblioteca')->set(0, $biblioteca);
+	}
+	if($plan) {
+	    $entity->get('field_concesion')->set(0, $plan);
+	}
+	
+    //$entity->get('field_id_actividad_agenda')->set(0, 0);
+	
+}

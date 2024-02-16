@@ -1,0 +1,9 @@
+alertas:
+  version: VERSION
+  css:
+    theme:
+      css/alertas.css: {}
+  js:
+    js/alertas.js: {}
+  dependencies:
+    - core/jquery

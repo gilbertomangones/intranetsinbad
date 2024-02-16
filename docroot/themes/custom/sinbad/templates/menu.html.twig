@@ -1,0 +1,30 @@
+    {% for item in items %}
+      <li{{ item.attributes }}>
+        {# If, for any reason, item.icon is empty, you can retrieve it like this: #}
+        {% set icon = item['#icon'] ?: item.original_link.getOptions().icon %} 
+
+        {# Embed icon inside link text #}
+        {% set link_text %}
+          {% if icon %}
+            {# Example of an SVG icon as a Twig template #}
+            {% include '@yourtheme/icons/icon.html.twig' with { icon: icon } %}
+
+            {# Example of icon as CSS background image #}
+            <span class="icon icon--{{ icon }}"></span>
+
+            {# Hide the text #}
+            <span class="visually-hidden">{{ item.title }}</span>
+          {% else %}
+            {# No icon, display the text only #}
+            <span class="menu-item-label">{{ item.title|raw }}</span>
+          {% endif %}
+        {% endset %}
+
+        {{ link(link_text, item.url) }}
+
+        {% if item.below %}
+          {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
+        {% endif %}
+
+      </li>
+    {% endfor %}

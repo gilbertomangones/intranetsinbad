@@ -1,0 +1,6 @@
+exportar: 
+  version: 1.x
+  js: 
+    js/reportes.js: {}
+  dependencies: 
+    - core/jquery

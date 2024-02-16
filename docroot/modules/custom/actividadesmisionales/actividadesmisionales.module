@@ -1,0 +1,1137 @@
+<?php
+use Drupal\reportes\Controller\FuncionesController;
+use Drupal\node\Entity\Node;
+use Drupal\Core\Form\FormStateInterface;
+use \Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Form\FormBase;
+use Drupal\Core\Ajax\OpenModalDialogCommand;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\HtmlCommand;
+use Drupal\Core\Ajax\ReplaceCommand;
+use Drupal\cshs\Component\CshsOption;
+use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
+use Drupal\biblored_module\Controller\EvEndpoint;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use Drupal\Core\Messenger;
+
+
+function actividadesmisionales_node_prepare_form(\Drupal\Core\Entity\EntityInterface $entity, $operation, \Drupal\Core\Form\FormStateInterface $form_state) {
+	
+	$subprograma = isset($_GET['subprograma']) ? $_GET['subprograma'] :"";
+	
+	$biblioteca = isset($_GET['biblioteca']) ? $_GET['biblioteca'] : "";
+	
+	$plan = isset($_GET['plan']) ? $_GET['plan'] : "";
+    
+    $taxonomyname = isset($_GET['namesubp']) ? $_GET['namesubp'] : '';
+	
+	if($subprograma) {
+	    $entity->get('field_linea')->set(0, $subprograma);
+        $entity->get('title')->set(0, $taxonomyname);
+	}
+	if($biblioteca) {
+	    $entity->get('field_biblioteca')->set(0, $biblioteca);
+	}
+	if($plan) {
+	    $entity->get('field_concesion')->set(0, $plan);
+	}
+	
+    //$entity->get('field_id_actividad_agenda')->set(0, 0);
+	
+}
+function actividadesmisionales_submit_ajax($form, &$form_state){
+  
+  $commands = array();
+  $response = new AjaxResponse();
+
+  //$commands[] = ajax_command_remove('.l-messages');
+  if($form_state->hasAnyErrors()){
+    //$commands[] = ajax_command_replace(NULL, drupal_render($form));
+  }
+  else{
+    $node = \Drupal::routeMatch()->getParameter('node');
+    
+    $new_form_state = array();
+    $new_form_state['build_info']['args'][] = $node;
+    $new_form_state['no_redirect'] = TRUE;
+    $new_form_state['input'] = array();
+    $new_form_state['values'] = array();
+  
+    //$new_form_state['method'] = $form_state['method'];
+    //$new_form = drupal_rebuild_form('finding_node_form', $new_form_state);
+
+    //$commands[] = ajax_command_replace(NULL, drupal_render($new_form));
+  }
+  //$commands[] = ajax_command_prepend('.my_top_message', '<section class="l-messages row"><div class="columns">' . theme('status_messages') . '</div></section>');
+   $message = [
+      '#theme' => 'status_messages',
+      '#message_list' => \Drupal::messenger()->all(), //$this->messenger->all(),
+    ];
+    $messages = \Drupal::service('renderer')->render($message);
+	$titulo_actividad = $form_state->getValue('title')[0]['value'];
+	$linea = $form_state->getValue('field_linea_misional')[0]['target_id'];
+	$accion = $form_state->getValue('field_linea')[0]['target_id'];
+	$franja_etaria =  $form_state->getValue('field_franja')[0]['target_id'];
+	$franja_etaria_mult =  $form_state->getValue('field_franja');
+	// Obtener los valores checkboxes de Franja
+	foreach ($franja_etaria_mult as $key => $value) {
+    	$array_franjas[] = $value['target_id'];
+    }
+	$franja_values = implode(",",$array_franjas);
+	
+	$grupo_poblacional = $form_state->getValue('field_grupo_poblacional')[0]['target_id'];
+	$fecha_inicio = $form_state->getValue('field_fecha_plan_operativo')[0]['value']->format('Y-m-d');
+	$hora = $form_state->getValue('field_hora_inicio')[0]['value'];
+	$duracion = $form_state->getValue('field_duracion')[0]['value'];
+	$id_tipo_espacio = $form_state->getValue('field_biblioteca')[0]['target_id'];
+	$term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($id_tipo_espacio);
+	$id_espacio = $term->parent->target_id;
+	$nid = $form_state->getValue('nid');
+	
+	$node_content = \Drupal\node\Entity\Node::load($nid);
+	$responsable = $node_content->uid->entity->mail->value;
+	$parametros_get = "idmalla=". $nid ."&titulo='" . $titulo_actividad . "'&franja=" . $franja_values . "&gpoblacional=" . $grupo_poblacional . "&finicio=" . $fecha_inicio . "&hora=" . $hora . "&duracion=" . $duracion . "&tipoespacio=" . $id_tipo_espacio . "&idespacio=" . $id_espacio . "&responsable=" . $responsable . "&accion=" . $accion . "&linea=" . $linea;
+	$uri = "https://intranet.biblored.net/planilla/ingreso_actividad.php?". $parametros_get;
+    \Drupal::logger('llamar servicio')->notice(print_r($uri, 1));
+	
+	 try {
+        $respuesta = \Drupal::httpClient()->get($uri, array('headers' => array('Accept' => 'text/plain')));
+        $data = (string) $respuesta->getBody();
+        if (empty($data)) {
+          return FALSE;
+        }
+      }
+      catch (RequestException $e) {
+        return FALSE;
+      }
+
+	$response->addCommand(
+      new HtmlCommand(
+        '.result_message ',
+        '<div class="my_top_message use-ajax" data-dialog-type="modal">' . t('Cambie solo datos que necesite antes de volver a guardar un nuevo evento. ') . $messages .' Planilla ' . $data . '</div>')
+    );
+	    
+    return $response;
+  //return array('#type' => 'ajax', '#commands' => $commands);
+  
+}
+/**
+ * Alter form especiales
+ */
+function actividadesmisionales_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) { 
+    
+	//echo $title . "titulo";
+	//\Drupal::logger('nombre form')->notice(print_r($form_id, 1));
+	
+	if ($form_id == 'node_prestamos_internet_form') {
+    	$form['#validate'][] = 'actividadesmisionales_form_validate';
+    }
+	
+    if ($form_id == 'node_malla_programacion_detallada_edit_form') {
+    	
+    	$user = \Drupal::currentUser()->getRoles();
+    	$triggering_element = $form_state->getTriggeringElement();
+    	
+    	$listado = "";
+    	$form['message'] = [
+			'#type' => 'markup',
+			'#markup' => '<div class="result_message"></div>',
+		  '#weight' => 20,
+	  ];
+    	//$linea_misional = $form_state->get('field_linea_misional')->getValue();
+    	$param = $_SERVER['REQUEST_URI'];
+        $valores = array_filter(explode('/', $param));
+        $nid = $valores[3];
+        $node = \Drupal\node\Entity\Node::load($nid);
+    	$line = $node->get('field_linea_misional')->getValue()[0]['target_id'];
+    	$strategy = $node->get('field_estrategias_misionales')->getValue()[0]['target_id'];
+    	$accion = $node->get('field_linea')->getValue()[0]['target_id'];
+    
+    	$vid_linea = 'areas';
+		$tree = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('areas', 0, 1, TRUE);
+    	foreach ($tree as $term) {
+			
+			$tid_autonomo = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($term->id());
+			$autonomo = $tid_autonomo->get('field_autonomo')->getValue();
+			$categorias = $tid_autonomo->get('field_categoria_actividad')->getValue();
+			$encontrado = false;
+			foreach ($categorias as $key => $value) {
+				$cat = $value['target_id'];
+				if ($cat == '1274') {
+					$encontrado = true;
+				}
+			}
+			$suspendido = $tid_autonomo->get('field_suprimir_activar')->getValue();
+			$valor_suspendido = $suspendido[0]['value'];
+			
+			if ($encontrado == 1 && $valor_suspendido == 0) {
+				$lineas[$term->id()] = $term->get('name')->value;
+			}
+			
+		}
+    	//**** codigo de linea aqui
+    	
+    	$form['field_linea_misional']['widget']['#options'] = $lineas;
+    	$form['field_linea_misional']['widget']['#ajax'] = [
+			'callback' => '_estrategias',
+			'wrapper' => 'programas-wrapper',
+			'event' => 'change',
+			'progress' => [
+			 'type' => 'throbber',
+			 'message' => 'Buscando Estrategias activas...',
+		   ],
+		];
+    	$selectedValue = $form_state->getValue('field_linea_misional');
+    	$selectedText = isset($selectedValue[0]['target_id']) ? $selectedValue[0]['target_id'] : "";
+    	if (empty($selectedText)) {
+        	$form['field_estrategias_misionales']['widget']['#options'] = lista_hijos($line);	
+        }
+    
+    	$form['field_estrategias_misionales']['#prefix'] = '<div id="programas-wrapper">';
+  		$form['field_estrategias_misionales']['#suffix'] = '</div>';
+    	
+    	$form['field_estrategias_misionales']['widget']['#ajax'] = [
+			'callback' => '_programas',
+			'wrapper' => 'programas-wrapper1',
+			'event' => 'change',
+			'progress' => [
+			 'type' => 'throbber',
+			 'message' => 'Buscando acciones activas...',
+		   ],
+		];
+    	$selectedValueEstrategy = $form_state->getValue('field_estrategias_misionales');
+    	$selectedTextStrategy = isset($selectedValueEstrategy[0]['target_id']) ? $selectedValueEstrategy[0]['target_id'] : "";
+    	
+    	if (empty($selectedTextStrategy)) {
+        	$form['field_linea']['widget']['#options'] = lista_hijos($strategy);
+        }
+    	
+    	$form['field_linea']['#prefix'] = '<div id="programas-wrapper1">';
+  		$form['field_linea']['#suffix'] = '</div>';
+
+    	$form['text'] = array(
+    	'#type' => 'fieldset',
+    	'#title' => t('Duplicar información. Solo aplica después de Guardar.'),
+    	'#weight' => 100,
+  		); 
+    	$form['text']['#markup'] = t('Este botón sólo se usa para Duplicar, una vez se haya Guardado primero.');
+    	$form['text']['#weight'] = 101;
+  		$form['text']['duplicate'] = [
+        	'#weight' => 990,
+    		'#type' => 'button',
+    		'#value' => t('Duplicar contenido editado.'),
+    		'#ajax' => [
+      			'callback' => 'saveDataAjaxCallback',
+      			'event' => 'click',
+    		]
+  		];
+    	
+    	//if (in_array("administrator", $user)) {
+        	$param = $_SERVER['REQUEST_URI'];
+            $valores = array_filter(explode('/', $param));
+        	$nid = $valores[3];
+        	$node = \Drupal\node\Entity\Node::load($nid);
+			
+        	$id_malla = $nid;
+            $titulo_actividad = $node->getTitle();
+        	//var_dump($node->get('field_biblioteca')->getValue());
+            $franja_etaria = !empty($node->get('field_franja')->getValue()) ? $node->get('field_franja')->getValue()[0]['target_id']: '';
+            $grupo_poblacional = !empty($node->get('field_grupo_poblacional')->getValue()) ? $node->get('field_grupo_poblacional')->getValue()[0]['target_id']: '';
+            $fecha_inicio = !empty($node->get('field_fecha_plan_operativo')->getValue()) ? $node->get('field_fecha_plan_operativo')->getValue()[0]['value'] : ''; 
+            $hora = !empty($node->get('field_hora_inicio')->getValue()) ? $node->get('field_hora_inicio')->getValue()[0]['value'] : '';
+            $duracion = !empty($node->get('field_duracion')->getValue()) ? $node->get('field_duracion')->getValue()[0]['value'] : '';
+            $id_tipo_espacio = !empty($node->get('field_biblioteca')->getValue()) ? $node->get('field_biblioteca')->getValue()[0]['target_id'] : '';
+        	$term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($id_tipo_espacio);
+			$linea = $node->get('field_linea_misional')->getValue()[0]['target_id'];
+        	$accion = $node->get('field_linea')->getValue()[0]['target_id'];
+        	$id_espacio = $term->parent->target_id;
+            $responsable = $node->uid->entity->mail->value; // Correo autor
+        	// planilla/$titulo_actividad/$franja_etaria/$grupo_poblacional/$fecha_inicio/$hora/$duracion/$id_tipo_espacio/$id_espacio/$responsable
+           $parametros_get = "idmalla=". $nid ."&titulo='" . $titulo_actividad . "'&franja=" . $franja_etaria . "&gpoblacional=" . $grupo_poblacional . "&finicio=" . $fecha_inicio . "&hora=" . $hora . "&duracion=" . $duracion . "&tipoespacio=" . $id_tipo_espacio . "&idespacio=" . $id_espacio . "&responsable=" . $responsable . "&accion=" . $accion . "&linea=" . $linea;
+    	   $uri = "https://intranet.biblored.net/planilla/ingreso_actividad.php?" . $parametros_get;
+    	   $servicio = new EvEndpoint;
+    	   $planilla = $servicio->serviciojson($uri);	
+    	   
+    	   /*
+           $form['enlace'] = [
+             '#type' => 'markup',
+  			 '#markup' => '<h2><a target="_blank" href="https://intranet.biblored.net/planilla/ingreso_actividad.php?'. $parametros_get .'">Crear Planilla</a></h2>',
+             '#weight' => 999,
+			];
+            */
+        	//$url = 'https://intranet.biblored.net/planilla/';
+        	//$external_link = Link::fromTextAndUrl(t('External link'), $url)->toString();
+        //}
+        
+    }
+	
+    if ($form_id == "node_malla_programacion_detallada_form" ) {
+        $selectedTextStrategy = "";
+    	// Alter Franja etarea
+    	//$form['field_franja']['#title'] = "Franjas";
+        $form['text'] = array(
+    	'#type' => 'fieldset',
+    	'#title' => t('Duplicar información. Solo aplica después de Guardar.'),
+    	'#weight' => 100,
+  		); 
+    	$form['text']['#markup'] = t('Este botón sólo se usa para Duplicar, una vez se haya Guardado primero.');
+    	$form['text']['#weight'] = 101;
+        $form['text']['duplicate2'] = [
+        	'#weight' => 100,
+    		'#type' => 'button',
+    		'#value' => t('Duplicar contenido'),
+    		'#ajax' => [
+      			'callback' => '_duplicateDataAjaxCallback',
+      			'event' => 'click',
+             	'#weight' => 99,
+    		]
+  		];
+    	$vid_linea = 'areas';
+		$tree = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('areas', 0, 1, TRUE);
+		$result = [];
+		$lineas = ['_none' => 'Seleccionar un valor'];
+		
+		foreach ($tree as $term) {
+			
+			$tid_autonomo = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($term->id());
+			$autonomo = $tid_autonomo->get('field_autonomo')->getValue();
+			$categorias = $tid_autonomo->get('field_categoria_actividad')->getValue();
+			$encontrado = false;
+			foreach ($categorias as $key => $value) {
+				$cat = $value['target_id'];
+				if ($cat == '1274') {
+					$encontrado = true;
+				}
+			}
+			$suspendido = $tid_autonomo->get('field_suprimir_activar')->getValue();
+			$valor_suspendido = $suspendido[0]['value'];
+			
+			if ($encontrado == 1 && $valor_suspendido == 0) {
+				$lineas[$term->id()] = $term->get('name')->value;
+			}
+			
+		}
+		
+		//dpm($form['field_linea_misional']);	
+		$form['field_linea_misional']['widget']['#options'] = $lineas;
+    	$form['field_linea_misional']['#required'] = TRUE;
+		$form['field_linea_misional']['widget']['#title'] = 'Líneas';
+		$form['field_linea_misional']['widget']['#ajax'] = [
+			'callback' => '_estrategias',
+			'wrapper' => 'programas-wrapper',
+			'event' => 'change',
+			'progress' => [
+			 'type' => 'throbber',
+			 'message' => 'Buscando Estrategias activas...',
+		   ],
+		];
+    	$form['field_linea_misional']['#weight'] = 0;
+              
+		$form['field_estrategias_misionales']['#prefix'] = '<div id="programas-wrapper">';
+  		$form['field_estrategias_misionales']['#suffix'] = '</div>';
+    	$selectedValue = $form_state->getValue('field_linea_misional');
+    	if ($selectedValue) {
+        // Get the text of the selected option.
+		$selectedText = $selectedValue[0]['target_id'];
+		// Place the text of the selected option in our textfield.
+		// $form['estrategia']['#value'] = $selectedText;
+		
+		$form['field_estrategias_misionales']['widget']['#options'] = lista_hijos($selectedText);
+        $form['field_estrategias_misionales']['#weight'] = 1;
+    	//$form['field_estrategias_misionales']['#required'] = TRUE;
+		$form['field_estrategias_misionales']['widget']['#ajax'] = [
+			'callback' => '_programas',
+			'wrapper' => 'programas-wrapper1',
+			'event' => 'change',
+			'progress' => [
+			 'type' => 'throbber',
+			 'message' => 'Buscando Programas activos...',
+		   ],
+		];
+        	$selectedValueEstrategy = $form_state->getValue('field_estrategias_misionales');
+			// Get the text of the selected option.
+			$selectedTextStrategy = isset($selectedValueEstrategy[0]) ? $selectedValueEstrategy[0]['target_id'] : "";
+        	if (!empty($selectedTextStrategy)) {
+        		$listado = lista_hijos($selectedTextStrategy);
+            }
+        }
+    	
+		$form['field_linea']['#prefix'] = '<div id="programas-wrapper1">';
+  		$form['field_linea']['#suffix'] = '</div>';
+    	
+		$form['field_linea']['widget']['#options'] = lista_hijos($selectedTextStrategy);
+        
+    	$form['message'] = [
+      		'#type' => 'markup',
+      		'#markup' => '<div class="result_message"></div>',
+        	'#weight' => 20,
+    	];    
+    	$form['#prefix'] = '<div id="wrapper">';
+  		$form['#suffix'] = '</div>';
+ 			$form['actions']['submit']['#ajax'] = array(
+    		'callback' => 'actividadesmisionales_submit_ajax',
+    		'wrapper' => 'finding-form-wrapper'
+  		);
+    
+    }
+	// Editar contenido (Edit)
+	if ($form_id == "node_actividades_misionales_edit_form") {
+    	$node = \Drupal::routeMatch()->getParameter('node');
+		if ($node instanceof \Drupal\node\NodeInterface) {
+  			$nid = $node->id();
+  			$node_details = Node::load($nid);
+			$ind_proceso = $node_details->field_indicador_proceso->target_id;
+        	$ind_producto = $node_details->field_indicador_producto->target_id;
+        	$ind_proceso_2 = $node_details->field_indicador_impacto->target_id;
+        	$ind_producto_2 = $node_details->field_valor_indicador_producto_2->target_id;
+        	//Generales 
+        	$form['field_total_plan_proceso']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+        	$form['field_total_plan_producto']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+        	$form['field_total_plan_impacto']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+        	$form['field_total_plan_producto_2']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+        	// Individuales
+        	if (empty($ind_proceso)){
+            	
+    			$form['field_valor_proceso_avanzado']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+            	$form['field_indicador_proceso']['widget']['#attributes'] = array('disabled' => 'true');
+            }
+        	if (empty($ind_producto)){
+            	
+    			$form['field_valor_producto_avanzado']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+    			$form['field_indicador_producto']['widget']['#attributes'] = array('disabled' => 'true');
+            }
+        	if (empty($ind_proceso_2)){
+            	$form['field_valor_proceso_2_avanzado']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+    			$form['field_avance_impacto']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+            	$form['field_indicador_impacto']['widget']['#attributes'] = array('disabled' => 'true');
+            }
+        	if (empty($ind_producto_2)){
+            	$form['field_valor_indicador_producto_2']['widget']['#attributes'] = array('disabled' => 'true');
+            	$form['field_valor_producto_2_avanzado']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+    			$form['field_valor_producto_2']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+            }
+        	
+		}
+    	
+    }
+   // Crear contenido (Add)
+   if ($form_id == "node_actividades_misionales_form" ) {
+		// Get current tid plan and program
+		$param = \Drupal::request()->query->all();
+		$program = $param['subprograma']; // Current program
+		$plan = $param['plan']; // Current Plan
+    	
+		// Verificar si existe el programa, que lo obtiene request url
+		$tipo_actividad = "";
+    	
+		if (!empty($program)) {
+			$termino = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($program);
+			$tipo_actividad = isset($termino->get('field_tipo_evento')->getValue()[0]) ? $termino->get('field_tipo_evento')->getValue()[0]['target_id'] : '';
+			if ($tipo_actividad) {
+				$term_name_tipo_act = \Drupal\taxonomy\Entity\Term::load($tipo_actividad)->get('name')->value;
+			}
+        	// Proceso 1
+			$ind_proceso = $termino->get('field_indicador_proceso')->getValue();
+			$ind_producto = $termino->get('field_indicador_producto')->getValue();
+        	$ind_impacto = $termino->get('field_impacto')->getValue();
+        	$ayuda_impacto = $termino->get('field_ayuda_ind_impacto')->getValue();
+        	// Obtener valores de Producto 2 en la taxonomia del programa
+      		$ind_prodcuto2 = $termino->get('field_indicador_producto_2')->getValue();
+      		$ayuda_producto2 = $termino->get('field_ayuda_indicador_producto_2')->getValue();
+        	// Condicional solo para Producto 2 en el tipo de contenido integral_usuario
+      		
+        	if (empty($ind_prodcuto2)) {
+        		$form['field_valor_producto_2']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+        		$form['field_valor_indicador_producto_2']['widget']['#options'] = array('_none' => "N/A");
+        		$form['field_valor_indicador_producto_2']['#attributes'] = array('disabled' => 'false'); 
+       		}else {
+          		$id_ind_producto_2 = isset($ind_prodcuto2[0]) ? $ind_prodcuto2[0]['target_id']: '';
+            	
+          		$term_name_ind_producto_2 = \Drupal\taxonomy\Entity\Term::load($id_ind_producto_2)->get('name')->value;
+            	//\Drupal::logger('producto 2 name')->notice(print_r($term_name_ind_producto_2, 1));
+          		$form['field_valor_indicador_producto_2']['widget']['#options'] = array($id_ind_producto_2 => $term_name_ind_producto_2);
+          		$form['field_valor_indicador_producto_2']['#attributes'] = array('disabled' => 'true'); 
+          		$form['field_valor_indicador_producto_2']['widget']['#description'] = isset($ayuda_producto2[0]['value']) ? $ayuda_producto2[0]['value'] : '';
+        	}
+            
+        	//Deshabilitar campos para que no entren info erada
+            
+             
+          	if (empty($ind_prodcuto2)) {
+				$form['field_valor_producto_2']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+            	$form['field_valor_indicador_producto_2']['widget']['#options'] = array('_none' => "N/A");
+		 		$form['field_valor_indicador_producto_2']['#attributes'] = array('disabled' => 'false'); 
+            }
+        
+			if (empty($ind_proceso)) {
+				$form['field_avance_meta_proceso']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+            }
+        
+			if (empty($ind_producto)) {
+				$form['field_avance_meta_producto']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+            }
+        
+       		if (empty($ind_impacto)) {
+				$form['field_avance_impacto']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+            	
+            	$form['field_indicador_impacto']['widget']['#options'] = array('_none' => "N/A");
+		 		$form['field_indicador_impacto']['#attributes'] = array('disabled' => 'false'); 
+            }else {
+            	
+            	 $id_ind_impacto = $ind_impacto[0]['target_id'];
+        		 
+            	 $term_name_ind_impacto = \Drupal\taxonomy\Entity\Term::load($id_ind_impacto)->get('name')->value;
+            	 
+            	 $form['field_indicador_impacto']['widget']['#options'] = array($id_ind_impacto => $term_name_ind_impacto);
+    			 
+                 $form['field_indicador_impacto']['#attributes'] = array('disabled' => 'true'); 
+            	
+            	 //$form['field_indicador_impacto']['widget']['#description'] = $ayuda_impacto;
+                 
+            }
+        	
+		}
+	    // Query in plan_de_accion_concesion
+		$query = \Drupal::entityTypeManager()->getStorage('node')->getQuery();
+		$query->condition('status', 1);
+        $query->accessCheck(TRUE);
+		$query->condition('type', 'plan_de_accion_concesion');
+		$query->condition('field_concesion', $plan);
+		$query->condition('field_linea', $program);
+		
+		$programs_plans = $query->execute();
+		$meta_proceso = 0;
+		$meta_producto = 0;
+   		$meta_proceso_2 = 0;
+   		$meta_producto_2 = 0;
+		
+		if ($programs_plans) {
+			$programs_storage = \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($programs_plans);
+			// Get values each program
+			
+			foreach ($programs_storage as $node) {
+            	
+				$meta_proceso = $node->get('field_proc_interna')->value + $node->get('field_proc_externo')->value;
+				$meta_producto = $node->get('field_prod_interno')->value + $node->get('field_prod_externo')->value;
+            	$meta_proceso_2 = $node->get('field_impacto_planeado')->value;
+				$meta_producto_2 = $node->get('field_producto_2')->value;
+			}
+		}		
+		
+		//2. Get advanced
+		// Query in actividades_misionales (Especiales)
+		$query_advanced = \Drupal::entityTypeManager()->getStorage('node')->getQuery();
+        $query_advanced->accessCheck(TRUE);
+		$query_advanced->condition('status', 1);
+		$query_advanced->condition('type', 'actividades_misionales');
+		$query_advanced->condition('field_concesion', $plan);
+		$query_advanced->condition('field_linea', $program);
+
+		$programs_missionals_advanced = $query_advanced->execute();
+		$meta_proceso_advanced = 0;
+		$meta_producto_advanced = 0;
+		if ($programs_missionals_advanced) {
+			$programs_storage_advanced = \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($programs_missionals_advanced);
+			// Get values each program
+			foreach ($programs_storage_advanced as $node) {
+				$meta_proceso_advanced += intval($node->get('field_avance_meta_proceso')->value);
+				$meta_producto_advanced += intval($node->get('field_avance_meta_producto')->value);
+			}
+		}
+
+		// Total Planned
+		// Total Advanced.
+		
+        //if (!isset($current_node->nid) || isset($current_node->is_new)) {
+        	$form['field_total_plan_proceso']['widget'][0]['value']['#default_value'] = $meta_proceso;
+    		$form['field_total_plan_producto']['widget'][0]['value']['#default_value'] = $meta_producto;
+    		$form['field_total_plan_proceso']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+            $form['field_total_plan_producto']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+    		
+    		$form['field_total_plan_impacto']['widget'][0]['value']['#default_value'] = $meta_proceso_2;
+        	$form['field_total_plan_impacto']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+        	$form['field_total_plan_producto_2']['widget'][0]['value']['#default_value'] = $meta_producto_2;
+			$form['field_total_plan_producto_2']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+    		
+			$form['field_valor_proceso_avanzado']['widget'][0]['value']['#default_value'] = $meta_proceso_advanced;
+			$form['field_valor_proceso_avanzado']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+			$form['field_valor_producto_avanzado']['widget'][0]['value']['#default_value'] = $meta_producto_advanced;
+			$form['field_valor_producto_avanzado']['widget'][0]['value']['#attributes'] = array('disabled' => 'true');
+        //}
+    	// Tipo actividad
+		if (!empty($tipo_actividad)) {
+			$form['field_tipo_actividad_relizada']['widget']['#options'] = array($tipo_actividad => $term_name_tipo_act);
+		}
+	}
+   
+   if ($form_id == 'node_actividades_misionales_edit_form' || $form_id == 'node_actividades_misionales_form') {
+		$form['#validate'][] = 'actividadesmisionales_node_form_validate';
+	}
+    /*
+	if ($form_id == 'node_prestamos_internet_form') {
+    	$form['#validate'][] = 'actividadesmisionales_prestamos_node_form_validate';
+    }
+	*/
+	
+}
+
+function actividadesmisonales_replicar_form(&$form, FormStateInterface $form_state) {
+    $entity = $form_state->getFormObject()->getEntity();
+    $entity->set('status', '1');
+    $entity->save();
+}
+function saveDataAjaxCallback(&$form, FormStateInterface $form_state) {
+	//$node = $form_state->getFormObject()->getEntity();
+	
+	$commands = array();
+  $response = new AjaxResponse();
+	if($form_state->hasAnyErrors()){
+    //$commands[] = ajax_command_replace(NULL, drupal_render($form));
+  }
+  else{
+    $node = \Drupal::routeMatch()->getParameter('node');
+    $new_form_state = array();
+    $new_form_state['build_info']['args'][] = $node;
+    $new_form_state['no_redirect'] = TRUE;
+    $new_form_state['input'] = array();
+    $new_form_state['values'] = array();
+    
+    $values = $form_state->getValues();
+    $title = $form_state->getValue('title'); // Empty when #tree = FALSE.
+    $field_aforo = $form_state->getValue('field_aforo');
+	$field_biblioteca = $form_state->getValue('field_biblioteca');
+	$field_colaboradores = $form_state->getValue('field_colaboradores');
+	$field_descripcion_corta = $form_state->getValue('field_descripcion_corta');
+	$body = $form_state->getValue('body');
+	$field_franja = $form_state->getValue('field_franja');
+	$field_duracion = $form_state->getValue('field_duracion');
+	$field_plataforma_virtual = $form_state->getValue('field_plataforma_virtual');
+	$field_estrategias_misionales = $form_state->getValue('field_estrategias_misionales');
+	$field_fecha_plan_operativo = $form_state->getValue('field_fecha_plan_operativo');
+    
+	$fecha_buscada = $field_fecha_plan_operativo[0]['value']['date'];
+  	
+	$fecha_ingresada = date('Y-m-d', strtotime($fecha_buscada));
+    
+	$field_grupo_poblacional_territor = $form_state->getValue('field_grupo_poblacional_territor');
+	$field_hora = $form_state->getValue('field_hora');
+	$field_hora_inicio = $form_state->getValue('field_hora_inicio');
+	$field_institucion = $form_state->getValue('field_institucion');
+	$field_linea_misional = $form_state->getValue('field_linea_misional');
+	$field_linea = $form_state->getValue('field_linea');
+	$field_linea_tematica = $form_state->getValue('field_linea_tematica');
+	$field_mediador_usuario = $form_state->getValue('field_mediador_usuario');
+	$field_canal = $form_state->getValue('field_canal');
+	$field_grupo_poblacional = $form_state->getValue('field_grupo_poblacional');
+	$field_tipo_proceso = $form_state->getValue('field_tipo_proceso');
+	$field_tipo_acceso = $form_state->getValue('field_tipo_acceso');
+	$field_tipo_evento = $form_state->getValue('field_tipo_evento');
+	$field_agenda = $form_state->getValue('field_agenda');
+	$field_es_planaccion = $form_state->getValue('field_es_planaccion');
+
+	$node = \Drupal::entityTypeManager()->getStorage('node')->create(array(
+  		'type'        => 'malla_programacion_detallada',
+  		'title'       => $title,
+  		'field_aforo' => $form_state->getValue('field_aforo'),
+		'field_biblioteca' => $form_state->getValue('field_biblioteca'),
+		'field_colaboradores' => $form_state->getValue('field_colaboradores'),
+		'field_descripcion_corta' => $form_state->getValue('field_descripcion_corta'),
+		'body' => $form_state->getValue('body'),
+		'field_franja' => $form_state->getValue('field_franja'),
+		'field_duracion' => $form_state->getValue('field_duracion'),
+		'field_plataforma_virtual' => $form_state->getValue('field_plataforma_virtual'),
+		'field_estrategias_misionales' => $form_state->getValue('field_estrategias_misionales'),
+		'field_fecha_plan_operativo' => $fecha_ingresada,
+		'field_grupo_poblacional_territor' => $form_state->getValue('field_grupo_poblacional_territor'),
+		'field_hora' => $form_state->getValue('field_hora'),
+		'field_hora_inicio' => $form_state->getValue('field_hora_inicio'),
+		'field_institucion' => $form_state->getValue('field_institucion'),
+		'field_linea_misional' => $form_state->getValue('field_linea_misional'),
+		'field_linea' => $form_state->getValue('field_linea'),
+		'field_linea_tematica' => $form_state->getValue('field_linea_tematica'),
+		'field_mediador_usuario' => $form_state->getValue('field_mediador_usuario'),
+		'field_canal' => $form_state->getValue('field_canal'),
+		'field_grupo_poblacional' => $form_state->getValue('field_grupo_poblacional'),
+		'field_tipo_proceso' => $form_state->getValue('field_tipo_proceso'),
+		'field_tipo_acceso' => $form_state->getValue('field_tipo_acceso'),
+		'field_tipo_evento' => $form_state->getValue('field_tipo_evento'),
+		'field_agenda' => $form_state->getValue('field_agenda'),
+		'field_es_planaccion' => $form_state->getValue('field_es_planaccion'),
+	));
+	 $node->save();
+  	 $nid = $node->id();
+  	 
+  	 $linea = $form_state->getValue('field_linea_misional')[0]['target_id'];
+  	 $id_tipo_espacio = $form_state->getValue('field_biblioteca')[0]['target_id'];
+		 $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($id_tipo_espacio);
+		 $id_espacio = $term->parent->target_id;
+		 $node_content = \Drupal\node\Entity\Node::load($nid);
+		 $responsable = $node_content->uid->entity->mail->value;
+	 
+  		$franja_etaria_mult =  $form_state->getValue('field_franja');
+		// Obtener los valores checkboxes de Franja
+		foreach ($franja_etaria_mult as $key => $value) {
+    		$array_franjas[] = $value['target_id'];
+    	}
+		$franja_values = implode(",",$array_franjas);
+  	 $parametros_get = "idmalla=". $id ."&titulo='" . $title . "'&franja=" . $franja_values . "&gpoblacional=" . $form_state->getValue('field_grupo_poblacional') . "&finicio=" . $form_state->getValue('field_hora_inicio') . "&hora=" . $form_state->getValue('field_hora') . "&duracion=" . $form_state->getValue('field_duracion') . "&tipoespacio=" . $id_tipo_espacio . "&idespacio=" . $form_state->getValue('field_biblioteca') . "&responsable=" . $responsable . "&accion=" . $form_state->getValue('field_linea') . "&linea=" . $linea;
+  	
+  	 $uri = "https://intranet.biblored.net/planilla/ingreso_actividad.php?" . $parametros_get;
+  	
+     try {
+        $respuesta = \Drupal::httpClient()->get($uri, array('headers' => array('Accept' => 'text/plain')));
+        $data = (string) $respuesta->getBody();
+        if (empty($data)) {
+          return FALSE;
+        }
+      }
+      catch (RequestException $e) {
+        return FALSE;
+      }
+  }
+  //$commands[] = ajax_command_prepend('.my_top_message', '<section class="l-messages row"><div class="columns">' . theme('status_messages') . '</div></section>');
+   $message = [
+      '#theme' => 'status_messages',
+      '#message_list' => $this->messenger->all(),
+    ];
+   $messages = \Drupal::service('renderer')->render($message);
+	$response->addCommand(
+      new HtmlCommand(
+        '.result_message ',
+        '<div class="my_top_message use-ajax" data-dialog-type="modal">' . t('Cambie solo datos que necesite antes de volver a guardar un nuevo evento. ') . $messages . 'Planilla: ' . $data .'</div>')
+    );
+	    
+    return $response;
+	
+   }
+function actividadesmisionales_entity_presave(Drupal\Core\Entity\EntityInterface $entity) {
+	/*
+	if ($entity->bundle() == 'malla_programacion_detallada') {
+    	    $id = $entity->id();
+    		$id_tipo_espacio = $entity->get('field_biblioteca')->getValue()[0]['target_id'];
+    		$titulo = $entity->getTitle();
+    		$linea = $entity->get('field_linea_misional')->getValue()[0]['target_id'];
+		 	$term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($id_tipo_espacio);
+		 	
+    		$id_espacio = $term->parent->target_id;
+		 	$node_content = \Drupal\node\Entity\Node::load($id);
+		 	
+    		$responsable = $node_content->uid->entity->mail->value;
+		 	$franja = $entity->get('field_franja')->getValue()[0]['target_id'];
+    			
+    		$franja_etaria_mult =  $entity->get('field_franja')->getValue();
+			// Obtener los valores checkboxes de Franja
+			foreach ($franja_etaria_mult as $key => $value) {
+    			$array_franjas[] = $value['target_id'];
+    		}
+			$franja_values = implode(",",$array_franjas);
+    	
+    	 	$duracion = $entity->get('field_duracion')->getValue()[0]['value'];
+    	 	$gpoblacional = $entity->get('field_grupo_poblacional')->getValue()[0]['target_id'];
+    	 	$hora = $entity->get('field_hora_inicio')->getValue()[0]['value'];
+    	 	$accion = $entity->get('field_linea')->getValue()[0]['target_id'];    
+    		$fecha_inicio = $entity->get('field_fecha_plan_operativo')->getValue()[0]['value'];
+    	 	$fecha_ingresada = date('Y-m-d', strtotime($fecha_inicio));
+    
+  		    $parametros_get = "idmalla=". $id ."&titulo='" . $titulo . "'&franja=" . $franja_values  . "&gpoblacional=" . $gpoblacional . "&finicio=" . $fecha_ingresada . "&hora=" . $hora . "&duracion=" . $duracion . "&tipoespacio=" . $id_tipo_espacio . "&idespacio=" . $id_espacio . "&responsable=" . $responsable . "&accion=" . $accion . "&linea=" . $linea;
+  	 		$uri = "https://intranet.biblored.net/planilla/ingreso_actividad.php?update=true&" . $parametros_get;
+    		
+    		try {
+       			 $respuesta = \Drupal::httpClient()->get($uri, array('headers' => array('Accept' => 'text/plain')));
+        		 $data = (string) $respuesta->getBody();
+        		if (empty($data)) {
+          			return FALSE;
+        		}
+      		}
+      		catch (RequestException $e) {
+        		return FALSE;
+      		}
+    		
+    }
+    */
+}
+function actividadesmisionales_node_form_validate($form, FormStateInterface $form_state){
+	
+	global $base_url;
+	$node = $form_state->getFormObject()->getEntity();
+	
+  	$base_url_parts = parse_url($base_url); 
+  	$host = $base_url_parts['scheme']."://".$base_url_parts['host'].$base_url_parts['path'];
+	/*
+	if ($node->getType() == 'prestamos_internet') {	
+    	$values = $form_state->getValues();
+    	//$solomes = new DrupalDateTime('now', DATETIME_STORAGE_TIMEZONE);
+    	$solomes = new DrupalDateTime('now');
+		$mes_actual = $solomes->format('m');
+		$mes_anterior = strtotime('-1 months', strtotime("now"));
+    	$mes_anterior = date('m' , $mes_anterior);
+    
+    	$date_value = $form_state->getValue('field_fechas_ingreso')[0]['value'];
+    	
+    	$date_ingresado = new DrupalDateTime($date_value, DATETIME_STORAGE_TIMEZONE);
+    	//$date_ingresado = new DrupalDateTime(date('Y-m-d H:i',strtotime($date_value)));
+    	$mes_ingresado = $date_ingresado->format('m');
+    	
+    	$anno_ingresado = $date_ingresado->format('Y');
+    	$date_ingresado = $date_ingresado->format('Ym');
+    
+    	$biblioteca = $form_state->getValue('field_biblioteca');
+    	
+    	$biblioteca = $biblioteca[0]['target_id'];
+    	
+    	$predeterminados = new EvEndpoint;
+    	
+    	$uri =  $host."/json/prestamosinternet/". $anno_ingresado.$mes_ingresado ."/" . $biblioteca;
+        
+    	$client = new Client();
+    	$response = $client->get($uri);
+  		$result = json_decode($response->getBody(), TRUE);
+    	// Validar que ya existe contenido
+    	if (!empty($result)) {
+        	$form_state->setErrorByName('field_biblioteca', t('Ya existe un contenido de la misma biblioteca y la fecha.'));
+        }
+    }
+	*/
+	if ($node->getType() == 'actividades_misionales' &&  ($node->is_new)) {
+		$programa = $node->get('field_linea')->getvalue();
+		$fecha = $node->get('field_fecha_realizada_act')->getValue();
+		
+		if (isset($programa) && isset($fecha)) {
+			$programa_buscado = $programa[0]['target_id'];
+			$fecha_buscada = $fecha[0]['value'];
+			$fecha_ingresada = date('Y-m-01', strtotime($fecha_buscada));
+			
+			$query = \Drupal::entityTypeManager()->getStorage('node')->getQuery();
+			$query->condition('status', 1);
+            $query->accessCheck(TRUE);
+			$query->condition('type', 'actividades_misionales');
+			$query->condition('field_linea', $programa_buscado);
+			$query->condition('field_fecha_realizada_act', $fecha_ingresada . 'T05:00:00');
+
+			$existe_actividad = $query->execute();
+			
+			if ($existe_actividad) {
+				$form_state->setErrorByName('field_linea', t('Ya existe esta actividad (Programa y fecha de la actividad) .'));
+			}
+		}
+		
+	}
+	
+	$user = \Drupal::currentUser()->getRoles();
+    $node = $form_state->getFormObject()->getEntity();
+	
+    if (($node->getType() == 'actividades_misionales')) {
+    	
+    	$plazo = \Drupal::config('Configuraciones.settings')->get('plazoespeciales'); // Día de cierre de especiales
+    	$date_selected = $form_state->getValue('field_fecha_realizada_act')[0]['value']; // Fecha seleccionado por el usuario
+        $mes_seleccionado = $date_selected->format('m'); // Obtener el mes seleccionado
+        $annio_seleccionado = $date_selected->format('Y'); // Obtener el año seleccionado
+    	$f2 = date("d-m-Y", strtotime($plazo.'-'.$mes_seleccionado.'-'.$annio_seleccionado)); //dia de cierre - mes y año seleccionado
+    	
+    	$f2_actual = date("d-m-Y", strtotime(date("d").'-'.$mes_seleccionado.'-'.$annio_seleccionado)); //dia de cierre en Sinbad- mes y año seleccionado
+    	$f1 = date("d-m-Y"); // Fecha actual
+    	
+    	$f1 = new DateTime($f1);
+		$f2 = new DateTime($f2);
+    	
+    	$f2_actual = new DateTime($f2_actual);
+		//$f2 = strtotime(date($pazo.'05-'.'2023'.' 23:59:59')); //dia de cierre - mes y año seleccionado
+		$diff = $f2->diff($f1);	
+    	
+    	$diff_menor = $f1->diff($f2_actual);	
+    	
+		
+		if (!in_array("administrator", $user)) {
+			if ($diff->days > -30 && $diff->days <= 30)
+				{
+				//\Drupal::logger('Validacion')->notice(print_r($diff->days, 1));
+				}
+			else
+				{
+					$form_state->setErrorByName("Campo Fecha Realizada",t('No puede entrar fechas fuera del tiempo programado. Por favor, revisar el campo "Fecha realizada"!'));
+			}
+        }
+    	
+    	/*
+		$date_value = $form_state->getValue('field_fecha_realizada_act')[0]['value'];
+    	
+    
+		$plazo = \Drupal::config('Configuraciones.settings')->get('plazoespeciales'); // Día de cierre de especiales
+		$dia_actual = date("d");
+		$mes_fecha_seleccionada = '';
+		$annio_fecha_seleccionada =  '';
+    	$mes_actual = date('n');
+    	$mes_anterior = strtotime('-1 months', strtotime("now"));
+    	$mes_anterior = date('m' , $mes_anterior);
+		$annio_actual = date('Y');
+    	$fecha_2 = date('d-m-Y');
+        $fecha_1 = date("d-m-Y", strtotime($plazo.'-'.$mes_actual.'-'.$annio_actual));
+		$date1 = new DateTime($fecha_1);
+		$date2 = new DateTime($fecha_2);
+		
+    	$date_selected = new DrupalDateTime($date_value, DATETIME_STORAGE_TIMEZONE);
+		$fecha_seleccionada = $date_selected->format('d-m-Y');
+    	$diff = $date_selected->diff($date2);	
+		// will output 2 days
+		
+        \Drupal::logger('dias')->notice(print_r($diff->days . ' days ', 1));    	
+    	if ($diff->days >= 62) {
+        	$form_state->setErrorByName("Campo Fecha Realizada",t('No puede entrar fechas fuera de rango.!'));
+        }
+		if (isset($date_value)) {
+			$date = new DrupalDateTime($date_value, DATETIME_STORAGE_TIMEZONE);
+        	
+			$value = $date->format('Y-m-d');
+			$mes_fecha_seleccionada = $date->format('m');	
+			$annio_fecha_seleccionada = $date->format('Y');
+		}
+		
+		if ($dia_actual > $plazo && $mes_fecha_seleccionada != $mes_actual && $plazo != "") {
+		  $type = 'error';
+		  $form_state->setErrorByName("Campo Fecha Realizada",t('El Plazo de fecha está vencido. Sólo podrán entrar actividades especiales del mes actual.'));
+		}elseif ($mes_fecha_seleccionada != $mes_actual && $mes_fecha_seleccionada != $mes_anterior) {
+		  $form_state->setErrorByName("Campo Fecha Realizada",t('No puede entrar fechas fuera del mes actual o mes anterior.!'));
+		}
+        */
+	}
+}
+
+function _estrategias($form, FormStateInterface $form_state) {
+	// Prepare our textfield. check if the example select field has a selected option.
+	$selectedValue = $form_state->getValue('field_linea_misional');
+	$selectedText = $selectedValue[0]['target_id'];
+    $form['field_estrategias_misionales']['widget']['#options'] = lista_hijos($selectedText);
+	$form['field_estrategias_misionales']['widget']['#validated'] = TRUE;
+	
+    $form_state->setRebuild(true);
+	return $form['field_estrategias_misionales'];	
+	
+}
+
+function _programas($form, FormStateInterface $form_state) {
+	$selectedValueEstrategy = $form_state->getValue('field_estrategias_misionales');
+	$selectedTextStrategy = $selectedValueEstrategy[0]['target_id'];
+	$form['field_linea']['widget']['#options'] = lista_hijos($selectedTextStrategy);
+	$form['field_linea']['widget']['#validated'] = TRUE;
+	
+	
+	$form_state->setRebuild(true);
+	return $form['field_linea'];
+}
+
+function lista_hijos($valorbuscar){
+	$terms = getTerms($valorbuscar);
+	return $terms;
+}
+
+function programas($form, FormStateInterface $form_state) {
+	return $form['field_linea'];
+}
+
+function getTerms($id) {
+	$vid = 'areas';
+	$parent_tid = $id; // the parent term id
+	$depth = 1; // 1 to get only immediate children, NULL to load entire tree
+	$load_entities = FALSE; // True will return loaded entities rather than ids
+	$child_terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vid, $parent_tid, $depth, $load_entities);
+	$arr_id = ['_none' => 'Seleccionar un valor'];
+	foreach ($child_terms as $child_term) {
+		$activo = term_activo($child_term->tid);
+		$misional = term_misional($child_term->tid);
+		if ($activo == true  && $misional == true) {
+			$arr_id[$child_term->tid] =  $child_term->name;
+		}
+	}
+	return $arr_id;
+}
+/*
+ Verificar si término está activo o suspendido
+*/
+function term_activo($tid){
+	$termino = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($tid);
+	$estado = $termino->field_suprimir_activar->value;
+	return $estado == 0 ? true : false; 
+}
+
+/*
+ Verificar si término es misional(tid == 1274) o no
+*/
+function term_misional($tid){
+	$encontrado = false;
+	$termino = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($tid);
+	$arr_misional = $termino->get('field_categoria_actividad')->getValue();
+	foreach ($arr_misional as $key => $value) {
+		if ($value['target_id'] == '1274' || $value['target_id'] == '1779') {
+			$encontrado = true;
+		}
+	}
+	return $encontrado;
+}
+
+function _duplicateDataAjaxCallback(&$form, FormStateInterface $form_state) {
+	
+	$new_entity = $form_state->getFormObject()->getEntity();
+	
+
+    if (!$new_entity->isNew()) {
+		$field_aforo = $form_state->getValue('field_aforo');
+		$field_biblioteca = $form_state->getValue('field_biblioteca');
+		$field_colaboradores = $form_state->getValue('field_colaboradores');
+		$field_descripcion_corta = $form_state->getValue('field_descripcion_corta');
+		$body = $form_state->getValue('body');
+		$field_franja = $form_state->getValue('field_franja');
+		$field_duracion = $form_state->getValue('field_duracion');
+		$field_plataforma_virtual = $form_state->getValue('field_plataforma_virtual');
+		$field_estrategias_misionales = $form_state->getValue('field_estrategias_misionales');
+		$field_fecha_plan_operativo = $form_state->getValue('field_fecha_plan_operativo');
+		$fecha_buscada = $field_fecha_plan_operativo[0]['value'];
+		$fecha_ingresada = date('Y-m-d', strtotime($fecha_buscada));
+		$field_grupo_poblacional_territor = $form_state->getValue('field_grupo_poblacional_territor');
+		$field_hora = $form_state->getValue('field_hora');
+		$field_hora_inicio = $form_state->getValue('field_hora_inicio');
+		$field_institucion = $form_state->getValue('field_institucion');
+		$field_linea_misional = $form_state->getValue('field_linea_misional');
+		$field_linea = $form_state->getValue('field_linea');
+		$field_linea_tematica = $form_state->getValue('field_linea_tematica');
+		$field_mediador_usuario = $form_state->getValue('field_mediador_usuario');
+		$field_canal = $form_state->getValue('field_canal');
+		$field_grupo_poblacional = $form_state->getValue('field_grupo_poblacional');
+		$field_tipo_proceso = $form_state->getValue('field_tipo_proceso');
+		$field_tipo_acceso = $form_state->getValue('field_tipo_acceso');
+		$field_tipo_evento = $form_state->getValue('field_tipo_evento');
+		$field_agenda = $form_state->getValue('field_agenda');
+		$field_es_planaccion = $form_state->getValue('field_es_planaccion');
+
+
+//$values = $form_state->getValues();
+    	$title = $form_state->getValue('title'); // Empty when #tree = 
+        $node = \Drupal::entityTypeManager()->getStorage('node')->create(array(
+			'type'        => 'malla_programacion_detallada',
+			'title'       => $title,
+			'field_aforo' => $form_state->getValue('field_aforo'),
+			'field_biblioteca' => $form_state->getValue('field_biblioteca'),
+			'field_colaboradores' => $form_state->getValue('field_colaboradores'),
+			'field_descripcion_corta' => $form_state->getValue('field_descripcion_corta'),
+			'body' => $form_state->getValue('body'),
+			'field_franja' => $form_state->getValue('field_franja'),
+			'field_duracion' => $form_state->getValue('field_duracion'),
+			'field_plataforma_virtual' => $form_state->getValue('field_plataforma_virtual'),
+			'field_estrategias_misionales' => $form_state->getValue('field_estrategias_misionales'),
+			'field_fecha_plan_operativo' => $fecha_ingresada,
+			'field_grupo_poblacional_territor' => $form_state->getValue('field_grupo_poblacional_territor'),
+			'field_hora' => $form_state->getValue('field_hora'),
+			'field_hora_inicio' => $form_state->getValue('field_hora_inicio'),
+			'field_institucion' => $form_state->getValue('field_institucion'),
+			'field_linea_misional' => $form_state->getValue('field_linea_misional'),
+			'field_linea' => $form_state->getValue('field_linea'),
+			'field_linea_tematica' => $form_state->getValue('field_linea_tematica'),
+			'field_mediador_usuario' => $form_state->getValue('field_mediador_usuario'),
+			'field_canal' => $form_state->getValue('field_canal'),
+			'field_grupo_poblacional' => $form_state->getValue('field_grupo_poblacional'),
+			'field_tipo_proceso' => $form_state->getValue('field_tipo_proceso'),
+			'field_tipo_acceso' => $form_state->getValue('field_tipo_acceso'),
+			'field_tipo_evento' => $form_state->getValue('field_tipo_evento'),
+			'field_agenda' => $form_state->getValue('field_agenda'),
+			'field_es_planaccion' => $form_state->getValue('field_es_planaccion'),
+	  ));
+	  
+	  //$clonednode = $new_entity->createDuplicate();
+	  //$clonednode->set('title', 'Cloned - ' . $new_entity->getTitle());
+	  //$clonednode->changed->value = time();
+
+	  //$clonednode->save();
+	  $node->save();
+      $nid = $node->id();
+      $titulo = $form_state->getValue('title')[0]['value'];
+  	  $linea = $form_state->getValue('field_linea_misional')[0]['target_id'];
+      
+  	     $id_tipo_espacio = $form_state->getValue('field_biblioteca')[0]['target_id'];
+		 $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($id_tipo_espacio);
+		 $id_espacio = $term->parent->target_id;
+		 $node_content = \Drupal\node\Entity\Node::load($nid);
+		 $responsable = $node_content->uid->entity->mail->value;
+		 $franja = $form_state->getValue('field_franja')[0]['target_id'];
+    	 
+    	 $duracion = $form_state->getValue('field_duracion')[0]['value'];
+    	 $gpoblacional = $form_state->getValue('field_grupo_poblacional')[0]['target_id'];
+    	 $hora = $form_state->getValue('field_hora_inicio')[0]['value'];
+    	 $accion = $form_state->getValue('field_linea')[0]['target_id'];
+    
+         $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($id_tipo_espacio);
+		 $id_espacio = $term->parent->target_id;
+    	 
+  	 $parametros_get = "idmalla=". $nid ."&titulo='" . $titulo . "'&franja=" . $franja  . "&gpoblacional=" . $gpoblacional . "&finicio=" . $fecha_ingresada . "&hora=" . $hora . "&duracion=" . $duracion . "&tipoespacio=" . $id_tipo_espacio . "&idespacio=" . $id_espacio . "&responsable=" . $responsable . "&accion=" . $accion . "&linea=" . $linea;
+  	 $uri = "https://intranet.biblored.net/planilla/ingreso_actividad.php?" . $parametros_get;
+     
+     try {
+        $respuesta = \Drupal::httpClient()->get($uri, array('headers' => array('Accept' => 'text/plain')));
+        $data = (string) $respuesta->getBody();
+        if (empty($data)) {
+          return FALSE;
+        }
+      }
+      catch (RequestException $e) {
+        return FALSE;
+      }
+	  $messages = "Contenido duplicado correctamente: " . "Planilla: " . $data;
+	  \Drupal::messenger()->addStatus(
+		t('@msg', ['@msg' => 'Contenido duplicado correctamente.'])
+	  );
+	  
+	  $response = new AjaxResponse();
+	  $response->addCommand(
+		new HtmlCommand(
+		  '.result_message ',
+		  '<div class="my_top_message use-ajax messages messages--status">' . $messages . '</div>')
+		);
+	  return $response;
+	  
+    }
+	
+}
+
+
+function actividadesmisionales_form_validate($form, FormStateInterface $form_state) {
+		global $base_url;
+		$node = $form_state->getFormObject()->getEntity();
+  		$base_url_parts = parse_url($base_url); 
+  		$host = $base_url_parts['scheme']."://".$base_url_parts['host'].$base_url_parts['path'];
+		$values = $form_state->getValues();
+    	//$solomes = new DrupalDateTime('now', DATETIME_STORAGE_TIMEZONE);
+    	$solomes = new DrupalDateTime('now');
+		$mes_actual = $solomes->format('m');
+		$mes_anterior = strtotime('-1 months', strtotime("now"));
+    	$mes_anterior = date('m' , $mes_anterior);
+    
+    	$date_value = $form_state->getValue('field_fechas_ingreso')[0]['value'];
+    	
+    	//$date_ingresado = new DrupalDateTime($date_value, DATETIME_STORAGE_TIMEZONE);
+        $date_ingresado = new DrupalDateTime($date_value, DateTimeItemInterface::STORAGE_TIMEZONE);
+       
+    	//$date_ingresado = new DrupalDateTime(date('Y-m-d H:i',strtotime($date_value)));
+    	$mes_ingresado = $date_ingresado->format('m');
+    	
+    	$anno_ingresado = $date_ingresado->format('Y');
+    	$date_ingresado = $date_ingresado->format('Ym');
+    
+    	$biblioteca = $form_state->getValue('field_biblioteca');
+    	$result = "";
+		if (empty($biblioteca[0]['target_id'])){
+        	\Drupal::messenger()->addError('Biblioteca hace falta'); //Imprime el mensaje en color Rojo
+        }else{
+        	$biblioteca = $biblioteca[0]['target_id'];
+    		$predeterminados = new EvEndpoint;
+    		$uri =  $host."/json/prestamosinternet/". $anno_ingresado.$mes_ingresado ."/" . $biblioteca;
+    		$client = new Client();
+    		$response = $client->get($uri);
+  			$result = json_decode($response->getBody(), TRUE);
+        	// Validar que ya existe contenido
+    		if (!empty($result)) {
+        		$form_state->setErrorByName('field_biblioteca', t('Ya existe un contenido de la misma biblioteca y la fecha.'));
+        	}
+        }
+    	
+}

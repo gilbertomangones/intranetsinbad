@@ -1,0 +1,5 @@
+name: Configuraciones
+type: module
+description: 'Módulo de configuración'
+core_version_requirement: ^8 || ^9
+project: 'custom'

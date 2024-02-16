@@ -1,0 +1,222 @@
+@font-face {
+ font-family: 'icomoon';
+  src:  url('fonts/icomoon.eot?6ay9lu');
+  src:  url('fonts/icomoon.eot?6ay9lu#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?6ay9lu') format('truetype'),
+    url('fonts/icomoon.woff?6ay9lu') format('woff'),
+    url('fonts/icomoon.svg?6ay9lu#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+[class^="icon-"], [class*=" icon-"], [id*="ui-id-"]{
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.region-sidebar-first {
+    background: #5D4195;
+    #block-logosinbad {
+        marging: 0 auto;
+        width: 80%;
+    }
+    #block-footer1 {
+        width: 80%;
+        margin: 0 auto;
+        font-size: 10px;
+        padding-top: 5%;
+        padding-bottom: 5%;
+    }
+}
+#block-logosinbad {
+    width: 80%;
+    img {
+            width: 100%;
+            height: auto;
+            padding: 1em;
+    }
+}
+.ui-state-active {
+    background: #45226C;
+}
+
+#block-accordionmainnavigation {
+    .ui-accordion {
+        .ui-button:active {
+            .ui-icon:active {
+                background-image: url(images/ui-icons_ffffff_256x240.png)/*{iconsActive}*/;
+                float: right;
+            }
+        }
+        .ui-accordion-content{
+            background: transparent;
+            border: 0;
+        }
+        h2 {
+            border: 0;
+            a, span {
+                color: #fff;
+                text-decoration: none;
+                text-align: left;
+            }
+        }
+        .ui-accordion-header{
+            background: transparent;
+            padding-top: 5%;
+            padding-bottom: 5%;
+            .ui-accordion-header-icon {
+                
+            }
+        }
+
+        h2{
+            &#ui-id-1::before {
+                content: "\e900";
+                color: #fff;
+            }
+            &#ui-id-7::before {
+                content: "\e926";
+                color: #fff;
+            }
+            &#ui-id-9::before {
+                content: "\e926";
+                color: #fff;
+            }
+            &#ui-id-11::before {
+                content: "\e925";
+                color: #fff;
+            }
+            &#ui-id-13::before {
+                content: "\ea09";
+                color: #fff;
+            }
+            &#ui-id-5::before {
+                content: "\e994";
+                color: #fff;
+            }
+            &#ui-id-3::before {
+                content: "\e971";
+                color: #fff;
+            } 
+        }
+    }
+    .item-list {
+        ul {
+            li{
+                a, span {
+                    color: #fff;
+                    text-decoration: none;
+                    text-align: left;
+                    display: block;
+                    padding: 5px;    
+                } 
+
+                padding: 5px;
+            }
+            li:hover {
+                    background:#45226c;
+                    padding: 5px;
+                    border-radius: 20px;
+                }
+            list-style: none;
+            }
+    }
+}
+
+.ui-accordion-header-collapsed {
+    border: 0;
+    background: transparent;
+}
+
+
+li.menu-link.cheeseburger-menu__item.main__item:hover {
+    background: #45226C;
+    border-radius: 20px;
+}
+
+#block-cheeseburgermenutrigger {
+    h2 {
+        text-align: center;
+        color: #fff;
+    }
+    .cheeseburger-menu__submenu {
+        .cheeseburger-menu__item.in-active-trail>a{
+        text-decoration: none;
+    }
+    }
+    
+}
+
+.block-cheeseburgermenu-container {
+        .cheeseburger-menu__item-label.configuracion{
+            &:before {
+                content:url('../images/config.png');
+                padding: 7px;
+            }
+        }
+        .cheeseburger-menu__item-label.planeacion{
+            &:before {
+                content:url('../images/planeacion.png');
+                padding: 7px;
+            }
+        }
+        .cheeseburger-menu__item-label.reportes{
+            &:before {
+                content:url('../images/reportes.png');
+                padding: 7px;
+            }
+        }
+        .cheeseburger-menu__item-label.informes{
+            &:before {
+                content:url('../images/informes.png');
+                padding: 7px;
+            }
+        }
+}
+.cheeseburger-menu__item {
+    padding-left: 10%;
+}
+.cheeseburger-menu__submenu {
+    li {
+        padding: 10px 0 10px 0;
+    }
+}
+
+.cheeseburger-menu__main-navigation-area {
+    &::after {
+        content: "";
+        padding: 10px 0 10px 0;
+        /* width: 200px; */
+        /* position: absolute; */
+        width: 256px;
+        height: 269px;
+        display: block;
+        bottom: 0;
+        background-image: url(../images/logoizq.png);
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+}
+.main__item.in-active-trail {
+    background: #45226C;
+    border-radius: 20px;
+    font-weight: 600;
+}
+.feed-icons {
+    .xlsx-feed {
+        a{
+            background-image: url(../images/excel.png);
+            width: 40px;
+            height: 40px;
+        }
+    }
+}

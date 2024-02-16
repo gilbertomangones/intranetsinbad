@@ -1,0 +1,46 @@
+{#
+/**
+ * @file
+ */
+#}
+<br />
+<h2>Reporte de servicios de biblioteca - consulta de material</h2>
+{% if conectado is null %}
+
+<div class="row">
+	<div class="col-md-3">Audio libro: {{  contenido[0]['AULIB'] }}</div >
+    <div class="col-md-3">Braille: {{  contenido[0]['BRAIL'] }}</div >
+	<div class="col-md-3">Braille infantil: {{  contenido[0]['BRINF'] }}</div>
+	<div class="col-md-3">Braille literatura: {{  contenido[0]['BRLIT'] }}</div>
+	<div class="col-md-3"> Blu ray: {{  contenido[0]['BLRAY'] }}</div>
+    <div class="col-md-3">Caset: {{  contenido[0]['CASET'] }}</div>
+    <div class="col-md-3">Colección infantil: {{  contenido[0]['LBINF'] }}</div>
+	<div class="col-md-3">Colección general: {{  contenido[0]['LIBRG'] }}</div>
+	<div class="col-md-3">Consulta de referencia: {{  contenido[0]['REFER'] }}</div>
+    <div class="col-md-3">CD multimedia: {{  contenido[0]['CDMUL'] }}</div>
+	<div class="col-md-3">CD música: {{  contenido[0]['CDMUS'] }}</div>
+	<div class="col-md-3">CD: {{  contenido[0]['CD'] }}</div>
+	<div class="col-md-3">DVD: {{  contenido[0]['DVD'] }}</div>
+    <div class="col-md-3">E-reader: {{  contenido[0]['EREAD'] }}</div>
+    <div class="col-md-3">Folleto: {{  contenido[0]['FLLET'] }}</div>
+    <div class="col-md-3">Juegos de ensamble: {{  contenido[0]['JENSA'] }}</div>
+    <div class="col-md-3">Juegos de ejercicio: {{  contenido[0]['JEJER'] }}</div>
+    <div class="col-md-3">Juegos de reglas: {{  contenido[0]['JREGL'] }}</div>
+    <div class="col-md-3">Juegos simbólicos: {{  contenido[0]['JSIMB'] }}</div>
+    <div class="col-md-3">Láminas: {{  contenido[0]['LAMIN'] }}</div>
+    <div class="col-md-3">Literatura: {{  contenido[0]['LITER'] }}</div>
+    <div class="col-md-3">Mapa: {{  contenido[0]['MAPA'] }}</div>
+    <div class="col-md-3">Partitura: {{  contenido[0]['PARTI'] }} </div>
+    <div class="col-md-3">Película: {{  contenido[0]['VDVD'] }}</div>
+	<div class="col-md-3">Portatil: {{  contenido[0]['CPORT'] }}</div>
+    <div class="col-md-3">Publicación periódica: {{  contenido[0]['ISSUE'] }}</div>
+	<div class="col-md-3">Objeto: {{  contenido[0]['OBJET'] }}</div>
+	<div class="col-md-3">Reservado: {{  contenido[0]['RESER'] }}</div>
+    <div class="col-md-3">Tablet: {{  contenido[0]['TABLE'] }}</div>
+	<div class="col-md-3">VIDEO: {{  contenido[0]['VIDEO'] }}</div>
+	<div class="col-md-3">VH: {{  contenido[0]['VH'] }}</div>
+</div>
+
+{% endif %}
+
+

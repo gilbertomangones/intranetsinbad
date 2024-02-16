@@ -1,0 +1,4 @@
+name: Reportes
+Description: Módulo de reportes
+type: module
+core_version_requirement: ^8 || ^9

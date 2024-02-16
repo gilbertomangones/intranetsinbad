@@ -1,0 +1,3 @@
+alertas config:
+  title: 'alertas'
+  description: 'A custom permission for your module alertas.'

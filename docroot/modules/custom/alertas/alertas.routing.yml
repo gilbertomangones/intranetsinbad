@@ -1,0 +1,14 @@
+alertas.bibliotecas:
+  path: '/generaralertas'
+  defaults: 
+    _form: 'Drupal\alertas\Form\AlertasBibliotecasForm'
+    _title: 'Reporte de Plan de acción vs Ejecución.'
+  requirements:
+    _permission: 'alertas config'
+alertas.v2:
+  path: '/alertasavances'
+  defaults: 
+    _form: 'Drupal\alertas\Form\AlertasAvancesForm'
+    _title: 'Reporte de Plan de acción vs Ejecución - Especiales - otros.'
+  requirements:
+    _permission: 'alertas config'
