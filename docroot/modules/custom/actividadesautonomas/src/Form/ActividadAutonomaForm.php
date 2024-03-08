@@ -153,7 +153,7 @@ class ActividadAutonomaForm extends FormBase {
        '#options' => $lineas,
        '#attributes' => array(
                         'style'=>'',
-                        'class' => array('col-md-6'),
+                        'class' => array(''),
                       ),
         //'#empty_option' => $this->t('Bibliotecas'),
        '#ajax' => [
@@ -162,7 +162,7 @@ class ActividadAutonomaForm extends FormBase {
           'method' => 'replace',
           'effect' => 'fade',
         ],
-        '#prefix' => '<div class="col-md-4 mallalinea">',
+        '#prefix' => '<div class=" mallalinea">',
         '#suffix' => '</div>',
     ); 
 
@@ -172,10 +172,10 @@ class ActividadAutonomaForm extends FormBase {
       '#validated' => TRUE,
       '#attributes' => array(
                       'style'=>'',
-                      'class' => array('col-md-6'),
+                      'class' => array(''),
                     ),
       '#options' => $this->getOptions($form_state),
-      '#prefix' => '<div class="col-md-4" id="programas-wrapper">',
+      '#prefix' => '<div class="" id="programas-wrapper">',
       '#suffix' => '</div>',
       //'#default_value' => isset($form_state->getValues()['programas'])?$form_state->getValues()['programas']:"",
       '#ajax' => [
@@ -194,7 +194,7 @@ class ActividadAutonomaForm extends FormBase {
       '#required'=> TRUE,
       '#attributes' => array(
                       'style'=>'',
-                        'class' => array('col-md-4'),
+                        'class' => array(''),
                     ),
       '#options' => $this->getOptionsSubprogramas($form_state),
       '#prefix' => '<div class="col-md-4" id="programas-wrapper1">',
@@ -212,7 +212,7 @@ class ActividadAutonomaForm extends FormBase {
         'method' => 'replace',
         'effect' => 'fade',
       ],
-    '#prefix' => '<div class="col-md-6">',
+    '#prefix' => '<div class="">',
   '#suffix' => '</div>',
     );
   $form['filtro']['biblioteca_2'] = [
@@ -223,7 +223,7 @@ class ActividadAutonomaForm extends FormBase {
       '#validated' => TRUE,
       //'#default_value' => isset($form_state->getValues()['biblioteca_2'])?$form_state->getValues()['biblioteca_2']:"",
       //'#empty_option' => $this->t('Bibliotecas'),
-      '#prefix' => '<div class="col-md-6" id="bibliotecas-wrapper-espacio">',
+      '#prefix' => '<div class="" id="bibliotecas-wrapper-espacio">',
       '#suffix' => '</div>',
   ];
    /*
@@ -265,7 +265,7 @@ class ActividadAutonomaForm extends FormBase {
             '#type' => 'submit',
             '#value' => $this->t('Ingresar actividad autónoma'),
         ],
-        '#prefix' => '<div class="btn-ingresar col-md-6">',
+        '#prefix' => '<div class="btn-ingresar">',
         '#suffix' => '</div>',
     ]; 
       return $form;
