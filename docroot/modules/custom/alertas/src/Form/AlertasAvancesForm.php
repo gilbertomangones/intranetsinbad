@@ -88,7 +88,6 @@ class AlertasAvancesForm extends FormBase {
 		$form['filtro']['linea'] = array(
 			'#type' => 'select',
 			'#title' => 'Línea',
-			'#description' => 'Líneas Misionales',
 			'#options' => $lineas,
 			'#required'=> TRUE,
 		   ); 
