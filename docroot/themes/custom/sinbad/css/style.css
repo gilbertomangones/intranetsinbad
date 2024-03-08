@@ -12947,6 +12947,9 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
   border-radius: 20px;
 }
 
+#block-cheeseburgermenutrigger {
+  width: 10%;
+}
 #block-cheeseburgermenutrigger h2, #block-cheeseburgermenutrigger .h2 {
   text-align: center;
   color: #fff;
@@ -12970,6 +12973,16 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
 .block-cheeseburgermenu-container .cheeseburger-menu__item-label.informes:before {
   content: url("../images/informes.png");
   padding: 7px;
+}
+.block-cheeseburgermenu-container h2, .block-cheeseburgermenu-container .h2 {
+  background-image: url(../images/logo.png);
+  height: 100px;
+  width: 200px;
+  margin: 0 auto;
+  text-indent: -9999px;
+  height: 80px;
+  background-repeat: no-repeat;
+  background-size: contain;
 }
 
 .cheeseburger-menu__item {
@@ -13088,4 +13101,28 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
 
 .block-cheeseburgermenu__trigger-element {
   width: 5%;
+}
+
+.iconos-login img {
+  width: 80px;
+}
+
+.inicio-left {
+  font-size: 1em !important;
+}
+
+.headerinto {
+  background: #E7BB4B;
+}
+
+#block-showuser {
+  width: 10%;
+  margin-left: auto;
+}
+
+.region.region-headerinto {
+  display: flex;
+  flex-wrap: wrap;
+  height: 100px;
+  align-content: space-between;
 }

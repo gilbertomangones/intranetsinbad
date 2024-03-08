@@ -98,3 +98,26 @@
 .block-cheeseburgermenu__trigger-element {
     width: 5%;
 }
+
+.iconos-login {
+	img {
+		width: 80px;
+	}
+}
+
+.inicio-left {
+    font-size: 1em !important;
+}
+.headerinto {
+    background: #E7BB4B;
+}
+#block-showuser {
+    width: 10%;
+    margin-left: auto;
+}
+.region.region-headerinto {
+    display: flex;
+    flex-wrap: wrap;
+    height: 100px;
+    align-content: space-between;
+}
