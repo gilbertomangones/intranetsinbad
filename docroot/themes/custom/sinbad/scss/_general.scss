@@ -119,6 +119,7 @@
     margin: 0 auto;
     background-position-x: center;
     text-indent: -9999px;
+    height: -webkit-fill-available;
 }
 .headerinto {
     background: #E7BB4B;
@@ -130,6 +131,6 @@
 .region.region-headerinto {
     display: flex;
     flex-wrap: wrap;
-    height: auto;
+    height: 60px;
     align-content: space-between;
 }
