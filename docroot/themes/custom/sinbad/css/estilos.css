@@ -117,8 +117,10 @@ details > .details-wrapper {
     border-color: #6c3992;
 }
 .biblored-module-agendaform {
+   /*
     display: flex;
     flex-wrap: wrap;
+    */
 }
 
 .biblored-module-agendaform .form-actions {
