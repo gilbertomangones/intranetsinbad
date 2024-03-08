@@ -153,7 +153,7 @@ class ActividadMisionalesForm extends FormBase {
        '#options' => $lineas,
        '#attributes' => array(
                         'style'=>'',
-                        'class' => array('col-md-6'),
+                        'class' => array(''),
                       ),
         //'#empty_option' => $this->t('Bibliotecas'),
        '#ajax' => [
@@ -162,7 +162,7 @@ class ActividadMisionalesForm extends FormBase {
           'method' => 'replace',
           'effect' => 'fade',
         ],
-        '#prefix' => '<div class="col-md-4 mallalinea">',
+        '#prefix' => '<div class=" mallalinea">',
         '#suffix' => '</div>',
     ); 
 
@@ -172,10 +172,10 @@ class ActividadMisionalesForm extends FormBase {
       '#validated' => TRUE,
       '#attributes' => array(
                       'style'=>'',
-                      'class' => array('col-md-6'),
+                      'class' => array(''),
                     ),
       '#options' => $this->getOptions($form_state),
-      '#prefix' => '<div class="col-md-4" id="programas-wrapper">',
+      '#prefix' => '<div class="" id="programas-wrapper">',
       '#suffix' => '</div>',
       '#default_value' => isset($form_state->getValues()['programas'])?$form_state->getValues()['programas']:"",
       '#ajax' => [
@@ -194,10 +194,10 @@ class ActividadMisionalesForm extends FormBase {
       '#required'=> TRUE,
       '#attributes' => array(
                       'style'=>'',
-                        'class' => array('col-md-4'),
+                        'class' => array(''),
                     ),
       '#options' => $this->getOptionsSubprogramas($form_state),
-      '#prefix' => '<div class="col-md-4" id="programas-wrapper1">',
+      '#prefix' => '<div class="" id="programas-wrapper1">',
       '#suffix' => '</div>',
       '#default_value' => isset($form_state->getValues()['autonomos'])?$form_state->getValues()['autonomos']:"", 
     ];
@@ -213,7 +213,7 @@ class ActividadMisionalesForm extends FormBase {
         'method' => 'replace',
         'effect' => 'fade',
       ],
-    '#prefix' => '<div class="col-md-6">',
+    '#prefix' => '<div class="">',
   '#suffix' => '</div>',
     );
   $tipo_espacio = $form_state->getValue('biblioteca');
@@ -245,7 +245,7 @@ class ActividadMisionalesForm extends FormBase {
       '#validated' => TRUE,
       '#default_value' => isset($form_state->getValues()['biblioteca_2'])?$form_state->getValues()['biblioteca_2']:"",
       //'#empty_option' => $this->t('Bibliotecas'),
-      '#prefix' => '<div class="col-md-6" id="bibliotecas-wrapper-espacio">',
+      '#prefix' => '<div class="" id="bibliotecas-wrapper-espacio">',
       '#suffix' => '</div>',
   ];
 /*
@@ -288,7 +288,7 @@ class ActividadMisionalesForm extends FormBase {
             '#type' => 'submit',
             '#value' => $this->t('Ingresar actividad'),
         ],
-        '#prefix' => '<div class="btn-ingresar col-md-6">',
+        '#prefix' => '<div class="btn-ingresar">',
         '#suffix' => '</div>',
     ]; 
       return $form;
