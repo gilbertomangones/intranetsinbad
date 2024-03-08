@@ -13089,7 +13089,7 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
   width: 50%;
 }
 #body_content form.node-form .form-item {
-  display: block;
+  display: block !important;
 }
 #body_content form .form-item {
   padding: 0 10px;
