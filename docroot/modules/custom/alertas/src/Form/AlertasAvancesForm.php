@@ -63,9 +63,9 @@ class AlertasAvancesForm extends FormBase {
 	        ],
 	        '#attributes' => array(
 	                    	'style'=>'',
-	                      'class' => array('col-md-6'),
+	                      'class' => array(''),
 	                    ),
-	        '#prefix' => '<div class="col-md-6" id="planes-wrapper01">',
+	        '#prefix' => '<div class="" id="planes-wrapper01">',
 	        '#suffix' => '</div>',
 	        '#validated' => 'true',
 	      );
@@ -77,11 +77,11 @@ class AlertasAvancesForm extends FormBase {
       '#options' => $this->getOptionsPlanes($form_state),
       '#default_value' => isset($form_state->getValues()['planes'])?$form_state->getValues()['planes']:"",
             //'#options' => $options2,//array($tid_planactual => 'Plan actual'),
-	    '#prefix' => '<div class="col-md-6" id="planes-wrapper">',
+	    '#prefix' => '<div class="" id="planes-wrapper">',
 	    '#suffix' => '</div>',
 	    '#attributes' => array(
                     	'style'=>'',
-                      'class' => array('col-md-6'),
+                      'class' => array(''),
                     ),
 	];
 
@@ -102,22 +102,22 @@ class AlertasAvancesForm extends FormBase {
 		    '#type' => 'select',
 		    '#title' => t('Alerta Proceso'),
 	      	'#options' => $rango_avance,
-		    '#prefix' => '<div class="col-md-6" id="planes-wrapper">',
+		    '#prefix' => '<div class="" id="planes-wrapper">',
 		    '#suffix' => '</div>',
 		    '#attributes' => array(
 	                    	'style'=>'',
-	                      'class' => array('col-md-6'),
+	                      'class' => array('c'),
 	                    ),
 		];
 		$form['filtro']['avance_producto'] = [
 		    '#type' => 'select',
 		    '#title' => t('Alerta Producto'),
 	      	'#options' => $rango_avance,
-		    '#prefix' => '<div class="col-md-6" id="planes-wrapper">',
+		    '#prefix' => '<div class="" id="planes-wrapper">',
 		    '#suffix' => '</div>',
 		    '#attributes' => array(
 	                    	'style'=>'',
-	                      'class' => array('col-md-6'),
+	                      'class' => array(''),
 	                    ),
 		];
 		$form['filtro']['actions1'] = [
