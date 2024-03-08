@@ -108,6 +108,13 @@
 .inicio-left {
     font-size: 1em !important;
 }
+#block-headercentro {
+    width: 80%;
+    text-align: center;
+    font-size: x-large;
+    font-weight: 500;
+    color: #5D4195;
+}
 .headerinto {
     background: #E7BB4B;
 }
@@ -118,6 +125,6 @@
 .region.region-headerinto {
     display: flex;
     flex-wrap: wrap;
-    height: 100px;
+    height: auto;
     align-content: space-between;
 }
