@@ -197,7 +197,7 @@ class ActividadAutonomaForm extends FormBase {
                         'class' => array(''),
                     ),
       '#options' => $this->getOptionsSubprogramas($form_state),
-      '#prefix' => '<div class="col-md-4" id="programas-wrapper1">',
+      '#prefix' => '<div class="" id="programas-wrapper1">',
       '#suffix' => '</div>',
       //'#default_value' => isset($form_state->getValues()['autonomos'])?$form_state->getValues()['autonomos']:"", 
     ];
