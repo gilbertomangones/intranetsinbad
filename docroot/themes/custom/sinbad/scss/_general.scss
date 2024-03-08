@@ -83,7 +83,7 @@
 
 .region-breadcrumb
 {
-  margin: 5% 0 0 5%;
+  margin-top: 3%;
 }
 
 #body_content {
@@ -91,6 +91,17 @@
     .views-exposed-form {
         .select-wrapper {
             width: 50%;
+        }
+    }
+    form {
+        .form-item {
+            padding: 0 10px;
+            display: flex;
+            justify-content: flex-end;
+            label {
+                padding: 0.5em 1em 0.5em 0;
+                flex: 1;
+            }
         }
     }
 }

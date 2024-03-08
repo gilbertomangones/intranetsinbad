@@ -125,8 +125,11 @@ details > .details-wrapper {
     width: 100%;
 }
 .order-1 form {
+    /*
     display: flex;
     flex-wrap: wrap;
+    flex-direction: column;
+    */
 }
 tbody tr td {
     color: #464646;

@@ -13089,7 +13089,7 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
 }
 
 .region-breadcrumb {
-  margin: 5% 0 0 5%;
+  margin-top: 3%;
 }
 
 #body_content {
@@ -13097,6 +13097,15 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
 }
 #body_content .views-exposed-form .select-wrapper {
   width: 50%;
+}
+#body_content form .form-item {
+  padding: 0 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+#body_content form .form-item label {
+  padding: 0.5em 1em 0.5em 0;
+  flex: 1;
 }
 
 .block-cheeseburgermenu__trigger-element {
