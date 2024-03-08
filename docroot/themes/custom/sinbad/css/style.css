@@ -13088,7 +13088,7 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
 #body_content .views-exposed-form .select-wrapper {
   width: 50%;
 }
-#body_content form.node-form .form-item {
+#body_content form .form-type-managed-file {
   display: block !important;
 }
 #body_content form .form-item {
