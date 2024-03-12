@@ -12,7 +12,19 @@
 }
 
 .node-form {
+    .field-group-title {
+        color: #5D4195;
+    }
+    span {
+        .fieldset-legend {
+            color: #5D4195;
+        }
+    }
     .form-wrapper {
+        .form-checkboxes {
+            display: flex;
+            flex-flow: wrap;
+        }
         .form-item {
             
         }
@@ -107,11 +119,9 @@
             label {
                 padding: 0.5em 1em 0.5em 0;
                 
-                text-transform: uppercase;
+                text-transform: math-auto;
             }
-            .form-control {
-                
-            }
+            
         }
     }
     .block {

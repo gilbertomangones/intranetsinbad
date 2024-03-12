@@ -13034,6 +13034,16 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
   content: url(../images/profile.png);
 }
 
+.node-form .field-group-title {
+  color: #5D4195;
+}
+.node-form span .fieldset-legend {
+  color: #5D4195;
+}
+.node-form .form-wrapper .form-checkboxes {
+  display: flex;
+  flex-flow: wrap;
+}
 .node-form .form-wrapper .fielset-legend {
   color: #5D4195;
   font-size: 1.3em;
@@ -13103,7 +13113,7 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
 }
 #body_content form .form-item label {
   padding: 0.5em 1em 0.5em 0;
-  text-transform: uppercase;
+  text-transform: math-auto;
 }
 #body_content .block h2, #body_content .block .h2 {
   color: #5D4195;
