@@ -13034,13 +13034,13 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
   content: url(../images/profile.png);
 }
 
-.node-form .field-group-fieldset .form-item {
-  display: grid;
-  grid-auto-columns: 200px;
-}
 .node-form .field-group-fieldset .fielset-legend {
   color: #5D4195;
   font-size: 1.3em;
+}
+.node-form .field-group-fieldset .fieldset-wrapper {
+  display: flex;
+  flex-flow: wrap;
 }
 .node-form input, .node-form select {
   border-radius: 20px;
