@@ -71,7 +71,7 @@
     .form--inline {
         .form-item {
             float:none;
-            display: flex;
+            
             label {
                 display: inline-block;
                 width: 30%;
@@ -108,15 +108,14 @@
 
         .form-item {
             padding: 0 10px;
-            display: flex;
-            justify-content: flex-end;
+            
             label {
                 padding: 0.5em 1em 0.5em 0;
-                flex: 1;
+                
                 text-transform: uppercase;
             }
             .form-control {
-                flex: 2;
+                
             }
         }
     }

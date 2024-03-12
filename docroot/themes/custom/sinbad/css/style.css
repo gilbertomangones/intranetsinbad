@@ -13072,7 +13072,6 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
 }
 .views-exposed-form .form--inline .form-item {
   float: none;
-  display: flex;
 }
 .views-exposed-form .form--inline .form-item label {
   display: inline-block;
@@ -13101,16 +13100,10 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
 }
 #body_content form .form-item {
   padding: 0 10px;
-  display: flex;
-  justify-content: flex-end;
 }
 #body_content form .form-item label {
   padding: 0.5em 1em 0.5em 0;
-  flex: 1;
   text-transform: uppercase;
-}
-#body_content form .form-item .form-control {
-  flex: 2;
 }
 #body_content .block h2, #body_content .block .h2 {
   color: #5D4195;
