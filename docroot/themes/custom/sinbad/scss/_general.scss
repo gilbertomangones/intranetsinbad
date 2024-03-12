@@ -12,6 +12,16 @@
 }
 
 .node-form {
+    .field-group-fieldset {
+        .form-item {
+            display: grid;
+            grid-auto-columns: 200px;
+        }
+        .fielset-legend {
+            color: #5D4195;
+            font-size: 1.3em;
+        }
+    }
     input, select {
         border-radius: 20px;
         border: 1px solid #5D4195;
