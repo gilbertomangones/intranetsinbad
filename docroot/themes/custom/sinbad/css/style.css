@@ -13034,11 +13034,11 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
   content: url(../images/profile.png);
 }
 
-.node-form .field-group-fieldset .fielset-legend {
+.node-form .form-wrapper .fielset-legend {
   color: #5D4195;
   font-size: 1.3em;
 }
-.node-form .field-group-fieldset .fieldset-wrapper {
+.node-form .form-wrapper .fieldset-wrapper {
   display: flex;
   flex-flow: wrap;
 }
