@@ -101,7 +101,7 @@ class PrestamosForm2 extends FormBase
           'method' => 'replace',
           'effect' => 'fade',
         ],
-        '#prefix' => '<div class="col-md-6 mallaespacio">',
+        '#prefix' => '<div class="mallaespacio">',
         '#suffix' => '</div>',
       );
     $form['filtro']['biblioteca_2'] = [
@@ -112,7 +112,7 @@ class PrestamosForm2 extends FormBase
         '#validated' => TRUE,
         '#default_value' => isset($form_state->getValues()['biblioteca_2'])?$form_state->getValues()['biblioteca_2']:"",
         //'#empty_option' => $this->t('Bibliotecas'),
-        '#prefix' => '<div class="col-md-6" id="bibliotecas-wrapper-espacio">',
+        '#prefix' => '<div class="" id="bibliotecas-wrapper-espacio">',
         '#suffix' => '</div>',
     ];
 
@@ -120,14 +120,14 @@ class PrestamosForm2 extends FormBase
      '#type' => 'date',
      '#title' => $this->t('Fecha inicio &nbsp;'),
        '#required' => TRUE,
-  '#prefix' => '<div class="col-md-12">',
+  '#prefix' => '<div class="">',
 	      '#suffix' => '</div>',
     );
   $form['fechafin'] = array(
    '#type' => 'date',
    '#title' => $this->t('Fecha fin &nbsp; &nbsp;&nbsp;&nbsp; &nbsp;'),
      '#required' => TRUE,
-  '#prefix' => '<div class="col-md-12">',
+  '#prefix' => '<div class="">',
 	      '#suffix' => '</div>',
   );
 
