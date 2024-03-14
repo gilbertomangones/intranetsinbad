@@ -74,7 +74,6 @@
 }
 
 .views-exposed-form {
-    padding-left: 5%;
     .form--inline {
         .form-item {
             float:none;
@@ -187,3 +186,15 @@
         width: 100%;
     }
 }
+table#taxonomy {
+        .handle {
+            width: 30px;
+            height: 30px;
+            display: block;
+        }  
+        .menu-item__link {
+            font-size: 1.5em;
+            text-decoration: none;
+            color: blueviolet;
+        }  
+    }

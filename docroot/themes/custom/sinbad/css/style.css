@@ -13077,9 +13077,6 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
   background: #5d4195;
 }
 
-.views-exposed-form {
-  padding-left: 5%;
-}
 .views-exposed-form .form--inline .form-item {
   float: none;
 }
@@ -13173,4 +13170,15 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
 }
 #user-login-form .form-submit {
   width: 100%;
+}
+
+table#taxonomy .handle {
+  width: 30px;
+  height: 30px;
+  display: block;
+}
+table#taxonomy .menu-item__link {
+  font-size: 1.5em;
+  text-decoration: none;
+  color: blueviolet;
 }
