@@ -216,3 +216,12 @@ table#taxonomy {
 a.button.button-action {
     background-color: #5D4195;
 }
+.taxonomy-term {
+    .field--label-inline {
+        line-height: 50px;
+        .field__label {
+            width: 50%;
+          }
+    }
+    
+}

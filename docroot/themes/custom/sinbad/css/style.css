@@ -13198,3 +13198,10 @@ table#taxonomy .menu-item__link {
 a.button.button-action {
   background-color: #5D4195;
 }
+
+.taxonomy-term .field--label-inline {
+  line-height: 50px;
+}
+.taxonomy-term .field--label-inline .field__label {
+  width: 50%;
+}
