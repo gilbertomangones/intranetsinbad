@@ -13167,3 +13167,10 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
 .inicio-right p {
   padding-left: 17%;
 }
+
+#user-login-form .form-control {
+  border-color: #5D4195;
+}
+#user-login-form .form-submit {
+  width: 100%;
+}
