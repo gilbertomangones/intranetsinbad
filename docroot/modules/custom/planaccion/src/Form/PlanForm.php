@@ -125,9 +125,9 @@ $form['filtro']['concesion'] = array(
       ],
       '#attributes' => array(
                     'style'=>'',
-                    'class' => array('col-md-6'),
+                    'class' => array(''),
                   ),
-      '#prefix' => '<div class="col-md-6" id="planes-wrapper01">',
+      '#prefix' => '<div class="" id="planes-wrapper01">',
       '#suffix' => '</div>',
       '#validated' => 'true',
     );
@@ -139,11 +139,11 @@ $form['filtro']['planes'] = [
     '#options' => $this->getOptionsPlanes($form_state),
     '#default_value' => isset($form_state->getValues()['planes'])?$form_state->getValues()['planes']:"",
           //'#options' => $options2,//array($tid_planactual => 'Plan actual'),
-    '#prefix' => '<div class="col-md-6" id="planes-wrapper">',
+    '#prefix' => '<div class="" id="planes-wrapper">',
     '#suffix' => '</div>',
     '#attributes' => array(
                     'style'=>'',
-                    'class' => array('col-md-6'),
+                    'class' => array(''),
                   ),
 ];
 //$terms =\Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('areas', $parent = 5, $max_depth = 1, $load_entities = FALSE);
@@ -155,7 +155,7 @@ $form['filtro']['linea'] = array(
    '#options' => $lineas,
    '#attributes' => array(
                     'style'=>'',
-                    'class' => array('col-md-6'),
+                    'class' => array(''),
                   ),
     //'#empty_option' => $this->t('Bibliotecas'),
    '#ajax' => [
@@ -164,7 +164,7 @@ $form['filtro']['linea'] = array(
       'method' => 'replace',
       'effect' => 'fade',
     ],
-    '#prefix' => '<div class="col-md-6 mallalinea">',
+    '#prefix' => '<div class="mallalinea">',
     '#suffix' => '</div>',
   ); 
 $form['filtro']['programas'] = [
@@ -173,10 +173,10 @@ $form['filtro']['programas'] = [
     '#validated' => TRUE,
     '#attributes' => array(
                     'style'=>'',
-                    'class' => array('col-md-6'),
+                    'class' => array(''),
                   ),
     '#options' => $this->getOptions($form_state),
-    '#prefix' => '<div class="col-md-6" id="programas-wrapper">',
+    '#prefix' => '<div class="" id="programas-wrapper">',
     '#suffix' => '</div>',
     '#default_value' => isset($form_state->getValues()['programas'])?$form_state->getValues()['programas']:"",
     /*'#ajax' => [
@@ -193,7 +193,7 @@ $form['filtro']['actions1'] = [
           '#type' => 'submit',
           '#value' => $this->t('Programas'),
       ],
-      '#prefix' => '<div class="btn-suprogramas col-md-12">',
+      '#prefix' => '<div class="btn-suprogramas">',
       '#suffix' => '</div>',
   ];
 
