@@ -13066,7 +13066,7 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
   background-color: #675193;
   border-color: #675193;
 }
-.node-form .button-action {
+.node-form a.button.button-action {
   background-color: #5D4195;
 }
 .node-form .form-checkboxes .form-item {
