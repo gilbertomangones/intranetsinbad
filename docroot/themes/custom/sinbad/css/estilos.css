@@ -103,10 +103,7 @@
     color: #fff;
     font-size: 12px;
 }
-details > .details-wrapper {
-    display: flex;
-    flex-wrap: wrap;
-}
+
 .alert-info {
     width: 100%;
 }
