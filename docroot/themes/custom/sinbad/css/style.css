@@ -13034,6 +13034,9 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
   content: url(../images/profile.png);
 }
 
+.node-form .field-group-html-element h3, .node-form .field-group-html-element .h3 {
+  color: #5D4195;
+}
 .node-form .field-group-title {
   color: #5D4195;
 }
@@ -13098,7 +13101,7 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
 }
 
 #body_content {
-  width: auto;
+  width: 100%;
 }
 #body_content .views-exposed-form .select-wrapper {
   display: block;

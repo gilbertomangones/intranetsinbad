@@ -12,6 +12,11 @@
 }
 
 .node-form {
+    .field-group-html-element {
+        h3 {
+            color: #5D4195;
+        }
+    }
     .field-group-title {
         color: #5D4195;
     }
@@ -101,7 +106,7 @@
 }
 
 #body_content {
-    width: auto;
+    width: 100%;
     .views-exposed-form {
         .select-wrapper {
             display: block;
