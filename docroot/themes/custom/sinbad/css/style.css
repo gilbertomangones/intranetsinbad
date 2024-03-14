@@ -13182,3 +13182,10 @@ table#taxonomy .menu-item__link {
   text-decoration: none;
   color: blueviolet;
 }
+
+.pager .is-active {
+  background: #5D4195;
+}
+.pager .page-link {
+  background: rgba(93, 65, 149, 0.2);
+}

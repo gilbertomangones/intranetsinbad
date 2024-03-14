@@ -198,3 +198,11 @@ table#taxonomy {
             color: blueviolet;
         }  
     }
+.pager {
+    .is-active{
+        background: #5D4195;
+    }
+    .page-link {
+        background: #5D419533;
+    }
+}
