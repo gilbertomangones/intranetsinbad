@@ -120,8 +120,14 @@
             
             label {
                 padding: 0.5em 1em 0.5em 0;
-                
+                font-weight: 600;                
                 text-transform: math-auto;
+            }
+            legend {
+                span {
+                    font-weight: 600;
+                    color: #5D4195;
+                }
             }
             
         }

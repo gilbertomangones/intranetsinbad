@@ -13112,7 +13112,12 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
 }
 #body_content form .form-item label {
   padding: 0.5em 1em 0.5em 0;
+  font-weight: 600;
   text-transform: math-auto;
+}
+#body_content form .form-item legend span {
+  font-weight: 600;
+  color: #5D4195;
 }
 #body_content .block h2, #body_content .block .h2 {
   color: #5D4195;
