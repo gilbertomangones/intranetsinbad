@@ -158,11 +158,12 @@
     margin: 0 auto;
     background-position-x: center;
     text-indent: -9999px;
-    height: -webkit-fill-available;
+    height: 100%;
 }
 .headerinto {
     background: #E7BB4B;
 }
+
 #block-showuser {
     width: 10%;
     margin-left: auto;
@@ -172,4 +173,9 @@
     flex-wrap: wrap;
     height: 60px;
     align-content: space-between;
+}
+.inicio-right{
+    p{
+        padding-left: 17%;
+    }
 }
