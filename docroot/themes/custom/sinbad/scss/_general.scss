@@ -46,7 +46,15 @@
     }
     .btn-primary {
         background-color: #5D4195;
+        &:hover {
+            background-color: #675193;
+            border-color: #675193;
+        }
     }
+    .button-action {
+        background-color: #5D4195;
+    }
+
     
     .form-checkboxes {
         .form-item {
