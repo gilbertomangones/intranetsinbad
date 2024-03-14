@@ -127,7 +127,7 @@ class ConteoForm extends FormBase
             'method' => 'replace',
             'effect' => 'fade',
           ],
-          '#prefix' => '<div class="col-md-6 mallaespacio">',
+          '#prefix' => '<div class="mallaespacio">',
           '#suffix' => '</div>',
         );
       	$form['filtro']['biblioteca_2'] = [
@@ -138,7 +138,7 @@ class ConteoForm extends FormBase
           '#validated' => TRUE,
           '#default_value' => isset($form_state->getValues()['biblioteca_2'])?$form_state->getValues()['biblioteca_2']:"",
           //'#empty_option' => $this->t('Bibliotecas'),
-          '#prefix' => '<div class="col-md-6" id="bibliotecas-wrapper-espacio">',
+          '#prefix' => '<div class="" id="bibliotecas-wrapper-espacio">',
           '#suffix' => '</div>',
       	];
     
