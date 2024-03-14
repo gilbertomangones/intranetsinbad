@@ -13059,16 +13059,6 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
 .node-form .form-check-input:checked {
   background-color: #5D4195;
 }
-.node-form .btn-primary {
-  background-color: #5D4195;
-}
-.node-form .btn-primary:hover {
-  background-color: #675193;
-  border-color: #675193;
-}
-.node-form a.button.button-action {
-  background-color: #5D4195;
-}
 .node-form .form-checkboxes .form-item {
   width: 48%;
 }
@@ -13195,4 +13185,16 @@ table#taxonomy .menu-item__link {
 }
 .pager .page-link {
   background: rgba(93, 65, 149, 0.2);
+}
+
+.btn-primary {
+  background-color: #5D4195;
+}
+.btn-primary:hover {
+  background-color: #675193;
+  border-color: #675193;
+}
+
+a.button.button-action {
+  background-color: #5D4195;
 }
