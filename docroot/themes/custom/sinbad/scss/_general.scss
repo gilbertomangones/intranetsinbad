@@ -41,10 +41,13 @@
         border-radius: 20px;
         border: 1px solid #5D4195;
     }   
-    .form-check-input:checked{
-        background-color: #5D4195;
+    .form-check-input {
+        width: 2em;
+        height: 2em;
+        &:checked{
+            background-color: #5D4195;
+        }
     }
-    
 
     
     .form-checkboxes {

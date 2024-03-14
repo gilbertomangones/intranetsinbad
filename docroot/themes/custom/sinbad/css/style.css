@@ -13056,6 +13056,10 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
   border-radius: 20px;
   border: 1px solid #5D4195;
 }
+.node-form .form-check-input {
+  width: 2em;
+  height: 2em;
+}
 .node-form .form-check-input:checked {
   background-color: #5D4195;
 }
