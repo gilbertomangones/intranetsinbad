@@ -13218,3 +13218,11 @@ a.button.button-action {
 .taxonomy-term .field--label-inline .field__label {
   width: 50%;
 }
+
+body {
+  background: #5D4195;
+}
+
+.node__content field {
+  line-height: 2em;
+}
