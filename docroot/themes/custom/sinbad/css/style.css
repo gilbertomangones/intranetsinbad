@@ -13219,10 +13219,6 @@ a.button.button-action {
   width: 50%;
 }
 
-body {
-  background: #5D4195;
-}
-
-.node__content field {
+.node__content .field {
   line-height: 2em;
 }
