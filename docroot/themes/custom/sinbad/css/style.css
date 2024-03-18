@@ -13015,6 +13015,10 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
   height: 40px;
 }
 
+.hidden {
+  display: none;
+}
+
 .footer_1 {
   text-align: center;
   display: block;
@@ -13067,6 +13071,11 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
 }
 .node-form #edit-group-participantes-por-genero .fieldset-wrapper .form-item, .node-form edit-group-poblacion .fieldset-wrapper .form-item, .node-form edit-group-persona-con-discapacidad .fieldset-wrapper .form-item {
   width: 100%;
+}
+
+.path-node .node-form .fieldset-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
 .menu_especial .h2 {

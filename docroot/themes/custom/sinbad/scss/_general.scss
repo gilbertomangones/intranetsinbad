@@ -1,3 +1,6 @@
+.hidden {
+    display: none;
+}
 .footer_1{
 	text-align: center;
     display: block;
@@ -69,6 +72,14 @@
     }
     
    
+}
+.path-node {
+    .node-form {
+        .fieldset-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+    }
 }
 .menu_especial {
     .h2 {
