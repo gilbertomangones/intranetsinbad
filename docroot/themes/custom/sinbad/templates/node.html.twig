@@ -15,7 +15,6 @@
  *   Calling other methods, such as node.delete(), will result in an exception.
  *   See \Drupal\node\Entity\Node for a full list of public properties and
  *   methods for the node object.
- * - label: (optional) The title of the node.
  * - content: All node items. Use {{ content }} to print them all,
  *   or print a subset such as {{ content.field_example }}. Use
  *   {{ content|without('field_example') }} to temporarily suppress the printing
@@ -81,12 +80,12 @@
 <article{{ attributes.addClass(classes) }}>
 
   {{ title_prefix }}
-  {% if label and not page %}
-    <h2{{ title_attributes }}>
-      <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-    </h2>
-  {% endif %}
+   <h2{{ title_attributes }}></h2>
   {{ title_suffix }}
+
+  <h2{{ title_attributes }}>
+      <a href="{{ url }}" rel="bookmark">{{ node.label }}</a>
+    </h2>
 
   {% if display_submitted %}
     <footer class="node__meta">
