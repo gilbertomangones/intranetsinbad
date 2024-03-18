@@ -12989,10 +12989,6 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
   padding-left: 10%;
 }
 
-.cheeseburger-menu__submenu li {
-  padding: 5px 0 10px 0;
-}
-
 .cheeseburger-menu__main-navigation-area::after {
   content: "";
   padding: 10px 0 10px 0;
