@@ -12942,6 +12942,11 @@ code {
   background: transparent;
 }
 
+.cheeseburger-menu__submenu li.menu-link.cheeseburger-menu__item.main__item:hover {
+  background: #7a6b99;
+  border-radius: 20px;
+}
+
 li.menu-link.cheeseburger-menu__item.main__item:hover {
   background: #45226C;
   border-radius: 20px;
