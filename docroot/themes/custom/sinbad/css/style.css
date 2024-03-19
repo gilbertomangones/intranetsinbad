@@ -13229,6 +13229,10 @@ a.button.button-action {
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
+.node .fieldset-wrapper .fieldset-legend {
+  color: #5D4195;
+  font-weight: 600;
+}
 
 .node__content .field {
   line-height: 2em;
