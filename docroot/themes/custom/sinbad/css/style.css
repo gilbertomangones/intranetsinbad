@@ -13220,6 +13220,11 @@ a.button.button-action {
   width: 50%;
 }
 
+.node .fieldset-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
 .node__content .field {
   line-height: 2em;
 }
