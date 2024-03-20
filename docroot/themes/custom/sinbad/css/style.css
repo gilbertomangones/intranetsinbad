@@ -13230,6 +13230,10 @@ a.button.button-action {
   grid-template-columns: 1fr 1fr;
 }
 
+.path-frontpage article h2 a, .path-frontpage article .h2 a {
+  display: none;
+}
+
 .node__content .field {
   line-height: 2em;
 }
