@@ -13180,6 +13180,9 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
 .inicio-right p {
   padding-left: 17%;
 }
+.inicio-right h2, .inicio-right .h2 {
+  text-align: center;
+}
 
 #user-login-form .form-control {
   border-color: #5D4195;
