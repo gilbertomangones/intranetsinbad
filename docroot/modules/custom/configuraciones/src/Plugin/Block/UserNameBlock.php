@@ -40,7 +40,7 @@ use Drupal\Core\Session\AccountProxyInterface;
           } 
           $cont++;
         }
-        $session_close = '<a href="/user/logout">Cerrar sesión</a>';
+        $session_close = '<a href="user/logout">Cerrar sesión</a>';
         $header_user = "<div class='profile-user'><span class='nameuser'>" .$name. "</span><span class='roles'>".$session_close."</span></div>";
     }
     else{
@@ -53,6 +53,5 @@ use Drupal\Core\Session\AccountProxyInterface;
     );
   
   }
-
 }
 ?>
