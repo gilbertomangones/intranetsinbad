@@ -13029,10 +13029,25 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
 
 .nameuser {
   display: block;
+  height: 33px;
 }
 
 .nameuser:after {
   content: url(../images/profile.png);
+}
+
+.iconos-login {
+  border: 1px solid gray;
+  margin-bottom: 3%;
+  border-radius: 5px;
+}
+.iconos-login :hover {
+  background: #efefef;
+  border-color: #5D4195;
+}
+.iconos-login a {
+  text-decoration: none;
+  color: #000;
 }
 
 .node-form .field-group-html-element h3, .node-form .field-group-html-element .h3 {
@@ -13138,6 +13153,7 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
 
 .block-cheeseburgermenu__trigger-element {
   width: 5%;
+  min-height: 60px;
 }
 
 .iconos-login img {

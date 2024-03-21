@@ -7,9 +7,24 @@
 }
 .nameuser{
     display: block;
+    height: 33px;
 }
 .nameuser:after {
     content: url(../images/profile.png);
+}
+
+.iconos-login {
+    border: 1px solid gray;
+    margin-bottom: 3%;
+    border-radius: 5px;
+    :hover {
+        background: #efefef;
+        border-color: #5D4195;
+    }
+    a {
+        text-decoration: none;
+        color: #000;
+    }
 }
 
 .node-form {
@@ -159,6 +174,7 @@
 
 .block-cheeseburgermenu__trigger-element {
     width: 5%;
+    min-height: 60px;
 }
 
 .iconos-login {
