@@ -13234,6 +13234,10 @@ a.button.button-action {
   display: none;
 }
 
+.block-broken {
+  display: none;
+}
+
 .node__content .field {
   line-height: 2em;
 }
