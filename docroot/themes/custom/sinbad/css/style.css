@@ -13108,6 +13108,7 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
 
 #body_content {
   width: 100%;
+  margin-top: 1px;
 }
 #body_content .views-exposed-form .select-wrapper {
   display: block;
