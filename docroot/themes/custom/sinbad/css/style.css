@@ -13049,6 +13049,9 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
   text-decoration: none;
   color: #000;
 }
+.iconos-login div h3, .iconos-login div .h3 {
+  margin-left: 15%;
+}
 
 .node-form .field-group-html-element h3, .node-form .field-group-html-element .h3 {
   color: #5D4195;
@@ -13058,6 +13061,9 @@ li.menu-link.cheeseburger-menu__item.main__item:hover {
 }
 .node-form span .fieldset-legend {
   color: #5D4195;
+}
+.node-form #edit-field-franja-wrapper .form-wrapper .fieldset-wrapper {
+  display: block;
 }
 .node-form .form-wrapper .form-checkboxes {
   display: flex;
@@ -13256,6 +13262,11 @@ a.button.button-action {
 
 .block-broken {
   display: none;
+}
+
+div.form-item-field-cuenta-espacio-discu-parti {
+  width: 30%;
+  float: left;
 }
 
 .node__content .field {

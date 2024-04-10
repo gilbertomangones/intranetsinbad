@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fc366817d4b5d777df11adfbaf9ee748",
+    "content-hash": "98d4a2b9db6664d6c83d9adb638d1984",
     "packages": [
         {
             "name": "alchemy/zippy",
@@ -4362,6 +4362,69 @@
             }
         },
         {
+            "name": "drupal/dynamic_entity_reference",
+            "version": "2.0.0-alpha19",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/dynamic_entity_reference.git",
+                "reference": "8.x-2.0-alpha19"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/dynamic_entity_reference-8.x-2.0-alpha19.zip",
+                "reference": "8.x-2.0-alpha19",
+                "shasum": "a5343baf212eb3371aca77a119e83cf9a3ff11eb"
+            },
+            "require": {
+                "drupal/core": "^9.3",
+                "php": ">=7.4"
+            },
+            "require-dev": {
+                "drupal/diff": "1.x-dev",
+                "mglaman/phpstan-drupal": "^1.1",
+                "phpstan/phpstan": "^1.1",
+                "phpstan/phpstan-deprecation-rules": "^1.0"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-2.0-alpha19",
+                    "datestamp": "1644273087",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Alpha releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Lee Rowlands",
+                    "homepage": "https://www.drupal.org/u/larowlan",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Jibran Ijaz",
+                    "homepage": "https://www.drupal.org/u/jibran",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "larowlan",
+                    "homepage": "https://www.drupal.org/user/395439"
+                }
+            ],
+            "description": "Provides a field that allows an entity-reference field to reference more than one entity type.",
+            "homepage": "http://drupal.org/project/dynamic_entity_reference",
+            "support": {
+                "source": "http://cgit.drupalcode.org/dynamic_entity_reference",
+                "issues": "http://drupal.org/project/dynamic_entity_reference",
+                "irc": "irc://irc.freenode.org/drupal-contribute"
+            }
+        },
+        {
             "name": "drupal/easy_install",
             "version": "10.5.0",
             "source": {
@@ -5447,6 +5510,56 @@
             }
         },
         {
+            "name": "drupal/fixed_block_content",
+            "version": "1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/fixed_block_content.git",
+                "reference": "8.x-1.3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/fixed_block_content-8.x-1.3.zip",
+                "reference": "8.x-1.3",
+                "shasum": "30488b4a57f02b27e63e9249be3e1f9f67a19f64"
+            },
+            "require": {
+                "drupal/core": "^9 || ^10",
+                "drupal/hal": "^1.0 || ^2.0"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-1.3",
+                    "datestamp": "1702646682",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Manuel Adan",
+                    "homepage": "https://www.drupal.org/user/516420",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "Provides fixed placements for custom blocks.",
+            "homepage": "http://drupal.org/project/fixed_block_content",
+            "keywords": [
+                "Drupal"
+            ],
+            "support": {
+                "source": "https://cgit.drupalcode.org/fixed_block_content",
+                "issues": "https://drupal.org/project/issues/fixed_block_content"
+            }
+        },
+        {
             "name": "drupal/flood_unblock",
             "version": "3.2.0",
             "source": {
@@ -5495,6 +5608,54 @@
             "homepage": "https://www.drupal.org/project/flood_unblock",
             "support": {
                 "source": "https://git.drupalcode.org/project/flood_unblock"
+            }
+        },
+        {
+            "name": "drupal/hal",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/hal.git",
+                "reference": "1.0.3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/hal-1.0.3.zip",
+                "reference": "1.0.3",
+                "shasum": "8e81b3b453ff63a281c1c470ff722f4af6206426"
+            },
+            "require": {
+                "drupal/core": "^9"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "1.0.3",
+                    "datestamp": "1664412481",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "bbrala",
+                    "homepage": "https://www.drupal.org/user/3366066"
+                },
+                {
+                    "name": "larowlan",
+                    "homepage": "https://www.drupal.org/user/395439"
+                }
+            ],
+            "description": "Hypermedia Application Language (HAL)",
+            "homepage": "https://www.drupal.org/project/hal",
+            "support": {
+                "source": "https://git.drupalcode.org/project/hal"
             }
         },
         {
@@ -6637,6 +6798,62 @@
             "homepage": "https://www.drupal.org/project/redirect",
             "support": {
                 "source": "https://git.drupalcode.org/project/redirect"
+            }
+        },
+        {
+            "name": "drupal/restui",
+            "version": "1.21.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/restui.git",
+                "reference": "8.x-1.21"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/restui-8.x-1.21.zip",
+                "reference": "8.x-1.21",
+                "shasum": "2a67dc2c1953dced0bddaff25e5c60784ee0178c"
+            },
+            "require": {
+                "drupal/core": "^8.7.7 || ^9 || ^10"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-1.21",
+                    "datestamp": "1659086914",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "-enzo-",
+                    "homepage": "https://www.drupal.org/user/294937"
+                },
+                {
+                    "name": "clemens.tolboom",
+                    "homepage": "https://www.drupal.org/user/125814"
+                },
+                {
+                    "name": "juampynr",
+                    "homepage": "https://www.drupal.org/user/682736"
+                },
+                {
+                    "name": "klausi",
+                    "homepage": "https://www.drupal.org/user/262198"
+                }
+            ],
+            "description": "Provides a user interface to manage REST resources.",
+            "homepage": "https://www.drupal.org/project/restui",
+            "support": {
+                "source": "https://git.drupalcode.org/project/restui"
             }
         },
         {
@@ -14855,6 +15072,7 @@
         "drupal/conditional_fields": 15,
         "drupal/config_update": 15,
         "drupal/convert_bundles": 15,
+        "drupal/dynamic_entity_reference": 15,
         "drupal/feeds": 10,
         "drupal/file_entity": 10,
         "drupal/filefield_paths": 10,
