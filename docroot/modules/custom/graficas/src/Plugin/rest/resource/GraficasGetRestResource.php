@@ -117,27 +117,102 @@ class GraficasGetRestResource extends ResourceBase {
     $nuevafecha = date('Y-m' , $fecha);
 
     $nueva_fecha_inicial = date('Y-m-01' , $fecha);
-    $nueva_fecha_final = date('Y-m-31' , $fecha);
+    $nueva_fecha_final = date('Y-m-t' , $fecha);
+    $query = \Drupal::database()->select('node_field_data', 'n');
+    $query->innerJoin('node__field_numero_asistentes_0_5_', 'fna05', 'fna05.entity_id = n.nid');
+    $query->innerJoin('node__field_fecha_realizada_act', 'fecha', 'fecha.entity_id = n.nid');
+    $query->addExpression('sum(fna05.field_numero_asistentes_0_5__value)', 'suma_0_5');
+    $query->condition('n.type', 'actividad_ejecutada');
+    $query->condition('fecha.field_fecha_realizada_act_value', [$nueva_fecha_inicial, $nueva_fecha_final], 'BETWEEN');
+    $query->condition('n.status', 1);
+    $result = $query->execute()->fetchAll();
+    $result_franjas[]= array(
+      'franja' => 'franja_0_5',
+      'total' => $result['suma_0_5']
+    ); 
 
+    $query = \Drupal::database()->select('node_field_data', 'n');
+    $query->innerJoin('node__field_numero_asistentes_6_12_', 'fna612', 'fna612.entity_id = n.nid');
+    $query->innerJoin('node__field_fecha_realizada_act', 'fecha', 'fecha.entity_id = n.nid');
+    $query->addExpression('sum(fna612.field_numero_asistentes_6_12__value)', 'suma_6_12');
+    $query->condition('n.type', 'actividad_ejecutada');
+    $query->condition('fecha.field_fecha_realizada_act_value', [$nueva_fecha_inicial, $nueva_fecha_final], 'BETWEEN');
+    $query->condition('n.status', 1);
+    $result = $query->execute()->fetchAll();
+    $result_franjas[]= array(
+      'franja' => 'franja_6_12',
+      'total' => $result['suma_6_12']
+    ); 
+    
+    $query = \Drupal::database()->select('node_field_data', 'n');
+    $query->innerJoin('node__field_numero_asistentes_13_18_', 'fna1318', 'fna1318.entity_id = n.nid');
+    $query->innerJoin('node__field_fecha_realizada_act', 'fecha', 'fecha.entity_id = n.nid');
+    $query->addExpression('sum(fna1318.field_numero_asistentes_13_18__value)', 'suma_13_18');
+    $query->condition('n.type', 'actividad_ejecutada');
+    $query->condition('fecha.field_fecha_realizada_act_value', [$nueva_fecha_inicial, $nueva_fecha_final], 'BETWEEN');
+    $query->condition('n.status', 1);
+    $result = $query->execute()->fetchAll();
+
+    $result_franjas[]= array(
+      'franja' => 'franja_13_18',
+      'total' => $result['suma_13_18']
+    );
+    
+    $query = \Drupal::database()->select('node_field_data', 'n');
+    $query->innerJoin('node__field_numero_asistentes_19_27_', 'fna1927', 'fna1927.entity_id = n.nid');
+    $query->innerJoin('node__field_fecha_realizada_act', 'fecha', 'fecha.entity_id = n.nid');
+    $query->addExpression('sum(fna1927.field_numero_asistentes_19_27__value)', 'suma_19_27');
+    $query->condition('n.type', 'actividad_ejecutada');
+    $query->condition('fecha.field_fecha_realizada_act_value', [$nueva_fecha_inicial, $nueva_fecha_final], 'BETWEEN');
+    $query->condition('n.status', 1);
+    $result = $query->execute()->fetchAll();
   
-        $query = \Drupal::database()->select('node_field_data', 'n');
-        $query->innerJoin('node__field_numero_asistentes_0_5_', 'fna05', 'fna05.entity_id = n.nid');
-        //$query->innerJoin('field_numero_asistentes_6_12_', 'fna612', 'fna612.entity_id = n.nid');
-        //$query->innerJoin('field_numero_asistentes_13_18_', 'fna1318', 'fna1318.entity_id = n.nid');
-        //$query->innerJoin('field_numero_asistentes_19_27_', 'fna1927', 'fna05.entity_id = n.nid');
-        //$query->innerJoin('field_numero_asistentes_28_60', 'fna2860', 'fna612.entity_id = n.nid');
-        //$query->innerJoin('field_numero_asistentes_61_mas', 'fna61mas', 'fna1318.entity_id = n.nid');
-        //$query->innerJoin('field_no_reporta_edad', 'fnoreporta', 'fna1318.entity_id = n.nid');
-        $query->innerJoin('node__field_fecha_realizada_act', 'fecha', 'fecha.entity_id = n.nid');
+    $result_franjas[]= array(
+      'franja' => 'franja_19_27',
+      'total' => $result['suma_19_27']
+    );
+    
+    $query = \Drupal::database()->select('node_field_data', 'n');
+    $query->innerJoin('node__field_numero_asistentes_28_60', 'fna2860', 'fna2860.entity_id = n.nid');
+    $query->innerJoin('node__field_fecha_realizada_act', 'fecha', 'fecha.entity_id = n.nid');
+    $query->addExpression('sum(fna2860.field_numero_asistentes_28_60_value)', 'suma_28_60');
+    $query->condition('n.type', 'actividad_ejecutada');
+    $query->condition('fecha.field_fecha_realizada_act_value', [$nueva_fecha_inicial, $nueva_fecha_final], 'BETWEEN');
+    $query->condition('n.status', 1);
+    $result = $query->execute()->fetchAll();
+    $result_franjas[]= array(
+      'franja' => 'franja_28_60',
+      'total' => $result['suma_28_60']
+    );
+    
+    $query = \Drupal::database()->select('node_field_data', 'n');
+    $query->innerJoin('node__field_numero_asistentes_61_mas', 'fna61mas', 'fna61mas.entity_id = n.nid');
+    $query->innerJoin('node__field_fecha_realizada_act', 'fecha', 'fecha.entity_id = n.nid');
+    $query->addExpression('sum(fna61mas.field_numero_asistentes_61_mas_value)', '');
+    $query->condition('n.type', 'actividad_ejecutada');
+    $query->condition('fecha.field_fecha_realizada_act_value', [$nueva_fecha_inicial, $nueva_fecha_final], 'BETWEEN');
+    $query->condition('n.status', 1);
+    $result = $query->execute()->fetchAll();
+    $result_franjas[]= array(
+      'franja' => 'franja_61_mas',
+      'total' => $result['suma_61_mas']
+    );
+    
+    $query = \Drupal::database()->select('node_field_data', 'n');
+    $query->innerJoin('node__field_no_reporta_edad', 'fnoreporta', 'fnoreporta.entity_id = n.nid');
+    $query->innerJoin('node__field_fecha_realizada_act', 'fecha', 'fecha.entity_id = n.nid');
+    $query->addExpression('sum(fnoreporta.field_no_reporta_edad_value)', 'suma_noreporta');
+    $query->condition('n.type', 'actividad_ejecutada');
+    $query->condition('fecha.field_fecha_realizada_act_value', [$nueva_fecha_inicial, $nueva_fecha_final], 'BETWEEN');
+    $query->condition('n.status', 1);
+    $result = $query->execute()->fetchAll();
+    $result_franjas[]= array(
+      'franja' => 'franja_noreporta',
+      'total' => $result['suma_noreporta']
+    );
 
-        $query->addExpression('sum(fna05.field_numero_asistentes_0_5__value)', 'suma');
-        $query->condition('n.type', 'actividad_ejecutada');
-        
-        $query->condition('fecha.field_fecha_realizada_act_value', [$nueva_fecha_inicial, $nueva_fecha_final], 'BETWEEN');
-        $query->condition('n.status', 1);
-        $result = $query->execute()->fetchAll();
-    $response = new ResourceResponse($term_result);
-    $response->addCacheableDependency($term_result);
+    $response = new ResourceResponse($result_franjas);
+    $response->addCacheableDependency($result_franjas);
     return $response;
   }
 
