@@ -76,46 +76,19 @@ class GraficasGetRestResource extends ResourceBase {
     if (!$this->loggedUser->hasPermission('access content')) {
       throw new AccessDeniedHttpException();
     }	
-	/*
-    $vid = 'franja';
-	$terms =\Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vid);
-	foreach ($terms as $term) {
-	  $term_result[] = array(
-	    'id' => $term->tid,
-		'name' => $term->name
-	  );
-	}
-    */
-
-  /*
-    $query = \Drupal::database()->select('node_field_data', 'n');
-    $query->innerJoin('field_numero_asistentes_0_5_', 'fna05', 'fna05.entity_id = n.nid');
-    $query->innerJoin('field_numero_asistentes_6_12_', 'fna612', 'fna612.entity_id = n.nid');
-    $query->innerJoin('field_numero_asistentes_13_18_', 'fna1318', 'fna1318.entity_id = n.nid');
-    */
+	
     // Implementing our custom REST Resource here.
     // Use currently logged user after passing authentication and validating the access of term list.
     if (!$this->loggedUser->hasPermission('access content')) {
       throw new AccessDeniedHttpException();
     }	
-	
-    $vid = 'franja';
-	$terms =\Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vid);
-	foreach ($terms as $term) {
-	  $term_result[] = array(
-	    'id' => $term->tid,
-		'name' => $term->name
-	  );
-	}
-    
-    
-    //MONTH(DATE_ADD(CURDATE(),INTERVAL -1 MONTH))
+
     
     $current_time = \Drupal::time()->getCurrentTime();   
     $date_today = \Drupal::service('date.formatter')->format($current_time, 'custom', 'Y-m-d');
     $fecha = strtotime('-1 months', strtotime($date_today));
     $nuevafecha = date('Y-m' , $fecha);
-
+  
     $nueva_fecha_inicial = date('Y-m-01' , $fecha);
     $nueva_fecha_final = date('Y-m-t' , $fecha);
     $query = \Drupal::database()->select('node_field_data', 'n');
@@ -126,11 +99,12 @@ class GraficasGetRestResource extends ResourceBase {
     $query->condition('fecha.field_fecha_realizada_act_value', [$nueva_fecha_inicial, $nueva_fecha_final], 'BETWEEN');
     $query->condition('n.status', 1);
     $result = $query->execute()->fetchAll();
+    
     $result_franjas[]= array(
       'franja' => 'franja_0_5',
-      'total' => $result['suma_0_5']
+      'total' => $result[0]->suma_0_5
     ); 
-
+   
     $query = \Drupal::database()->select('node_field_data', 'n');
     $query->innerJoin('node__field_numero_asistentes_6_12_', 'fna612', 'fna612.entity_id = n.nid');
     $query->innerJoin('node__field_fecha_realizada_act', 'fecha', 'fecha.entity_id = n.nid');
@@ -139,11 +113,12 @@ class GraficasGetRestResource extends ResourceBase {
     $query->condition('fecha.field_fecha_realizada_act_value', [$nueva_fecha_inicial, $nueva_fecha_final], 'BETWEEN');
     $query->condition('n.status', 1);
     $result = $query->execute()->fetchAll();
+    
     $result_franjas[]= array(
       'franja' => 'franja_6_12',
-      'total' => $result['suma_6_12']
+      'total' => $result[0]->suma_6_12
     ); 
-    
+
     $query = \Drupal::database()->select('node_field_data', 'n');
     $query->innerJoin('node__field_numero_asistentes_13_18_', 'fna1318', 'fna1318.entity_id = n.nid');
     $query->innerJoin('node__field_fecha_realizada_act', 'fecha', 'fecha.entity_id = n.nid');
@@ -155,9 +130,9 @@ class GraficasGetRestResource extends ResourceBase {
 
     $result_franjas[]= array(
       'franja' => 'franja_13_18',
-      'total' => $result['suma_13_18']
+      'total' => $result[0]->suma_13_18
     );
-    
+
     $query = \Drupal::database()->select('node_field_data', 'n');
     $query->innerJoin('node__field_numero_asistentes_19_27_', 'fna1927', 'fna1927.entity_id = n.nid');
     $query->innerJoin('node__field_fecha_realizada_act', 'fecha', 'fecha.entity_id = n.nid');
@@ -169,9 +144,9 @@ class GraficasGetRestResource extends ResourceBase {
   
     $result_franjas[]= array(
       'franja' => 'franja_19_27',
-      'total' => $result['suma_19_27']
+      'total' => $result[0]->suma_19_27
     );
-    
+
     $query = \Drupal::database()->select('node_field_data', 'n');
     $query->innerJoin('node__field_numero_asistentes_28_60', 'fna2860', 'fna2860.entity_id = n.nid');
     $query->innerJoin('node__field_fecha_realizada_act', 'fecha', 'fecha.entity_id = n.nid');
@@ -182,20 +157,20 @@ class GraficasGetRestResource extends ResourceBase {
     $result = $query->execute()->fetchAll();
     $result_franjas[]= array(
       'franja' => 'franja_28_60',
-      'total' => $result['suma_28_60']
+      'total' => $result[0]->suma_28_60
     );
-    
+
     $query = \Drupal::database()->select('node_field_data', 'n');
     $query->innerJoin('node__field_numero_asistentes_61_mas', 'fna61mas', 'fna61mas.entity_id = n.nid');
     $query->innerJoin('node__field_fecha_realizada_act', 'fecha', 'fecha.entity_id = n.nid');
-    $query->addExpression('sum(fna61mas.field_numero_asistentes_61_mas_value)', '');
+    $query->addExpression('sum(fna61mas.field_numero_asistentes_61_mas_value)', 'suma_61_mas');
     $query->condition('n.type', 'actividad_ejecutada');
     $query->condition('fecha.field_fecha_realizada_act_value', [$nueva_fecha_inicial, $nueva_fecha_final], 'BETWEEN');
     $query->condition('n.status', 1);
     $result = $query->execute()->fetchAll();
     $result_franjas[]= array(
       'franja' => 'franja_61_mas',
-      'total' => $result['suma_61_mas']
+      'total' => $result[0]->suma_61_mas
     );
     
     $query = \Drupal::database()->select('node_field_data', 'n');
@@ -208,7 +183,7 @@ class GraficasGetRestResource extends ResourceBase {
     $result = $query->execute()->fetchAll();
     $result_franjas[]= array(
       'franja' => 'franja_noreporta',
-      'total' => $result['suma_noreporta']
+      'total' => $result[0]->suma_noreporta
     );
 
     $response = new ResourceResponse($result_franjas);
